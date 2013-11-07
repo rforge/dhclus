@@ -1,0 +1,15 @@
+# Default NAMESPACE created by R
+# Remove the previous line if you edit this file
+
+# Export all names
+exportPattern("dhclus")
+
+# Import all packages listed as Imports or Depends
+import(
+  cluster,
+  e1071,
+  parallel,
+  pknng,
+  icav,
+  multicore
+)

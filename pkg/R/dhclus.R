@@ -1,10 +1,10 @@
-dhclus<- function(data, diss=FALSE,debug=FALSE,FUNCluster=Get.clusters, FUNTest=test, method=2,metric=2,...)
+dhclus<- function(data, diss=FALSE,debug=FALSE,FUNCluster=Get.clusters, FUNTest=test,...)
 {
   ind <- 1:dim(data)[1]
   init_clusters <- ind
   init_clusters[ind]<-0
   
-  tags<-calclus.spec(data=data, index=ind,  kl=1 , tags=init_clusters, FUNCluster=FUNCluster, FUNTest=FUNTest,method=method,metric=metric,...)
+  tags<-calclus.spec(data=data, index=ind,  kl=1 , tags=init_clusters, FUNCluster=FUNCluster, FUNTest=FUNTest,...)
   class<-list()
   class$tags<-tags
   vec<-as.matrix(class$tags)

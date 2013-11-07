@@ -4,7 +4,7 @@
 
 test<-function(data,result,...)
 {
-  return(test_gap(data,label=result$clusters,sigma=result$sigma,sigmas=result$sigmas,k=result$val,...))
+  return(test_gap(data,labels=result$clusters,sigma=result$sigma,sigmas=result$sigmas,k=result$val,...))
 }
 
 
@@ -18,7 +18,7 @@ test_gap<- function(data, labels, NumRef=100,sigmas=1,k=7,sigma=1,  method, debu
   W<-vector()
   WSS<-vector() 
   dat <- scale(data, center = TRUE, scale = F)
-    dis <-if(metric==1) pknng(dat,k=k,diss=F,fixed=1, silent=T, MinGroup=0,penalize=1)
+    dis <-if(metric==1) pknng(dat,k=k,diss=F,fixed.k=1, silent=T, MinGroup=0,penalize=1)
            else if(metric==2) mst2Path.Diss(as.matrix(dist(dat)))
               else as.matrix(dist(dat))
   
@@ -51,13 +51,13 @@ test_gap<- function(data, labels, NumRef=100,sigmas=1,k=7,sigma=1,  method, debu
     dx<- dist(X1)
     dx1<-as.matrix(dx)
       
-    dx<-if(metric==1) pknng(X1,k=k,diss=F,fixed=1, silent=T, MinGroup=0,penalize=1)
+    dx<-if(metric==1) pknng(X1,k=k,diss=F,fixed.k=1, silent=T, MinGroup=0,penalize=1)
       else if(metric==2) mst2Path.Diss(as.matrix(dist(X1)))
        else as.matrix(dist(X1))
     
     
     if (method!=3){
-      if(method==1 ) dx1<-pknng(X1,k=k,diss=F,fixed=1, silent=T, MinGroup=0,penalize=1)
+      if(method==1 ) dx1<-pknng(X1,k=k,diss=F,fixed.k=1, silent=T, MinGroup=0,penalize=1)
       
       pots<-1/c(sapply(1:8,function(x)(2^x)))  
       if (method==1) pots<-(c(9:6/10,pots))[1:8]

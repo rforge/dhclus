@@ -10,7 +10,7 @@ Get.clusters<-function(data, index, diss=FALSE, debug=FALSE,method,metric )
       print(paste("Selected k: ",val))
     } 
     
-    Dist<-as.matrix(pknng(data[index,],k=val,diss=F,fixed=1, silent=T, MinGroup=0,penalize=1))
+    Dist<-as.matrix(pknng(data[index,],k=val,diss=F,fixed.k=1, silent=T, MinGroup=0,penalize=1))
     sigma<-s$sigma 
     psigma<-s$psigma
     Sx1<-exp(-Dist^2/(2*sigma^2))
@@ -372,7 +372,7 @@ select_k<-function(data, diss=FALSE,kmax=15,Ca,centers,debug)
     i<-1
     while(i<cant+1)
     {
-      Dist<-as.matrix(pknng(data,k=((kmin+i)-1),diss=diss,fixed=1, silent=T, MinGroup=0))
+      Dist<-as.matrix(pknng(data,k=((kmin+i)-1),diss=diss,fixed.k=1, silent=T, MinGroup=0))
       print(kmin+i-1)
       s<-select.sigma(Dist,method=1,centers=centers,Ca=Ca,debug=debug)
       sigmas[i]<-s$mu
@@ -395,8 +395,8 @@ select_k<-function(data, diss=FALSE,kmax=15,Ca,centers,debug)
   }
   else {
     ks<-kmin
-    Dist<-as.matrix(pknng(data,k=3,diss=diss,fixed=1, silent=T, MinGroup=0))
-    s<-select.sigma2(Dist,method=1,centers=centers,Ca=Ca,debug=debug)
+    Dist<-as.matrix(pknng(data,k=3,diss=diss,fixed.k=1, silent=T, MinGroup=0))
+    s<-select.sigma(Dist,method=1,centers=centers,Ca=Ca,debug=debug)
     sigma<-s$mu
     psigma<-s$pms
     err<-s$error

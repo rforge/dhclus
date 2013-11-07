@@ -123,26 +123,3 @@ relabel<-function(etiquetas)
 
 
 
-
-
-scale.me<-function(data,center=T,scale=T)
-{
-  if(center)
-  {
-    me<-apply(data,2,mean)
-    data<-apply(rbind(me,data),2,function(v){return(v[-1]-v[1])} )
-  }
-  qq<-apply(data,2,sd)
-  max.qq<-max(qq)
-  for(i in 1:length(qq)){
-    if( (max.qq/qq[i])>1e4 ) 
-      qq[i]<- -1
-  }
-  
-  if(scale)
-  {
-    data<-apply(rbind(qq,data),2,function(v){if(v[1]>0){return(v[-1]/v[1])}else return(v[-1])} )
-  }
-  return(data)  
-}
-
