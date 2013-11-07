@@ -48,7 +48,7 @@ calclus.spec <- function(data, index, kl , tags,   diss=FALSE, debug=FALSE, FUNC
   
   tags[index]<-kl
 
-  sc<-FUNCluster(data=data,index=index,diss=diss,debug, ...)
+  sc<-FUNCluster(data,index, ...)
   if(!sc$error){
     left <- index[sc$clusters==1]  
     right<- index[sc$clusters==2]

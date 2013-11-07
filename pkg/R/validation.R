@@ -11,7 +11,7 @@ test<-function(data,result,...)
 #test gap statistics 
 # metric is used for compute the WSS : 1 pknng, 2 icav, 3 euclidean
 
-test_gap<- function(data, labels, NumRef=100,sigmas=1,k=7,sigma=1,  method, debug=F,metric)
+test_gap<- function(data, labels, NumRef=100,sigmas=1,k=7,sigma=1,  method=2, debug=F,metric=2)
 { 
 
   B<-NumRef

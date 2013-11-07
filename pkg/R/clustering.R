@@ -1,8 +1,8 @@
-Get.clusters<-function(data, index, diss=FALSE, debug=FALSE,method,metric )
+Get.clusters<-function(data, index, diss=FALSE, debug=FALSE,method=2,...)
 {
   
   if(method==1) {
-    s<-select_k(data[index,],kmax=9,Ca=7,centers=2,debug=TRUE)
+    s<-select_k(data[index,],kmax=9,Ca=7,centers=2,debug=debug)
     val<- s$k #sel2_k(data[index,])
     
     if(debug)
@@ -34,7 +34,7 @@ Get.clusters<-function(data, index, diss=FALSE, debug=FALSE,method,metric )
   { print(length(index))
     Dist<-as.matrix(dist(data[index,]))
     
-    re<-spectral.sep(Dist,method=method,centers=2,kmax=10,Ca=7,debug=TRUE)
+    re<-spectral.sep(Dist,method=method,centers=2,kmax=10,Ca=7,debug=debug)
     sc<-re[[1]]
     Sx1<-re[[2]]
     sigma<-re[[3]]
@@ -68,15 +68,7 @@ Get.clusters<-function(data, index, diss=FALSE, debug=FALSE,method,metric )
   return(sc)
 }
 
-#EClustering functions
 
-Myclustering<-function(data,index,...)
-{
-  res<-kmeans(data[index,],2)
-  res$error<-FALSE
-  res$clusters<-res$cluster
-  return(res)
-}
 
 #######################
 first_nonzero<-function(v,k){
@@ -101,11 +93,11 @@ rbf.dot.multiscale2 <-function(Dist,sigma)
 }
 
 #### Make Local Scaling similarity matrix
-rbf.dot.multiscale<-function(data,scale.vector){
-  if(dim(data)[2]!=length(scale.vector)) stop("Length Missmatch")
-  euc<-.Call("rbf_dot_multiscaled",data, c(dim(data)[1],dim(data)[2]),as.double(scale.vector),DUP=F)
-  return(euc)
-}
+# rbf.dot.multiscale<-function(data,scale.vector){
+#   if(dim(data)[2]!=length(scale.vector)) stop("Length Missmatch")
+#   euc<-.Call("rbf_dot_multiscaled",data, c(dim(data)[1],dim(data)[2]),as.double(scale.vector),DUP=F)
+#   return(euc)
+# }
 
 ##Select sigma for gaussian kernel
 select.sigma<-function(Dist,method,kmax=10,centers,Ca,debug)
