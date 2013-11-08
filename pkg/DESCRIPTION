@@ -5,7 +5,7 @@ Title: DHclus
 Authors@R: person("Erica Vidal", "Developer", role = c("aut", "cre"), email = "ericavidal@gmail.com")
 Author: Erica Vidal
 Maintainer: Erica Vidal <ericavidal@gmail.com>
-Depends: cluster, e1071, parallel, pknng, icav, multicore 
+Imports: cluster, e1071, parallel, pknng, icav, multicore 
 Description: Divisive hierarchical clustering algorithm with automatic determination of components.
 License: GPL (>= 3)
 URL: http://dhclus.r-forge.r-project.org/

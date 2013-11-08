@@ -58,8 +58,8 @@ Get.clusters<-function(data, index, diss=FALSE, debug=FALSE,method=2,...)
                              
                              #relabel is needed if outliers are found
                              sc$clusters<-relabel(sc$clusters[!sc$is.outlier])
-                             indi<- 1:dim(sc$yi)[1]
-                             ind<-indi[!sc$is.outlier] 
+#                              indi<- 1:dim(sc$yi)[1]
+#                              ind<-indi[!sc$is.outlier] 
                              
                              
     }

@@ -1,5 +1,5 @@
 \name{dhclus}
-\alias{dhclus}
+
 \title{Divisive hierarchical clustering algorithm with automatic determination of components.}
 \description{
 Generic function for clustering data using hierarchical strategies. 
@@ -9,7 +9,7 @@ as partitional clustering strategy in each level.
 }
 
 \usage{
-dhclus<- function(data, diss=FALSE,debug=FALSE,FUNCluster=Get.clusters, FUNTest=test,...)
+dhclus<- function(data, diss=FALSE, debug=FALSE, FUNCluster=Get.clusters, FUNTest=test, ...)
 }
 
 \arguments{
@@ -38,7 +38,7 @@ a list whith clustering information
 }
 
 \seealso{
-\code{\link{Get.clusters},\link{test},\link{test_gap}}.
+\code{\link{Get.clusters},\link{test_gap}}.
  }
 \examples{
 ## Using default spetral clustering
