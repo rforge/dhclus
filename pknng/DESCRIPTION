@@ -1,0 +1,9 @@
+Package: pknng
+Version: 0.1-1
+Date: $Date: 2010/01/5 $
+Title: penalized k-nn graph
+Author: Ariel E. Baya <baya@cifasis-conicet.gov.ar>, Pablo Granitto <granitto@cifasis-conicet.gov.ar>
+Maintainer: Ariel E. Baya <baya@cifasis-conicet.gov.ar>
+Depends: 
+Description: Clustering package for data analisys.
+License: GPL version 2 or newer

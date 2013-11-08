@@ -1,0 +1,13 @@
+Package: dhclus
+Version: 0.1-0
+Date: 2013-07-11
+Title: DHclus
+Authors@R: person("Erica Vidal", "Developer", role = c("aut", "cre"), email = "ericavidal@gmail.com")
+Author: Erica Vidal
+Maintainer: Erica Vidal <ericavidal@gmail.com>
+Depends: pknng
+Imports: cluster, e1071, parallel, pknng,  multicore 
+Description: Divisive hierarchical clustering algorithm with automatic determination of components.
+License: GPL (>= 3)
+URL: http://dhclus.r-forge.r-project.org/
+BugReports: https://r-forge.r-project.org/tracker/?group_id=1468

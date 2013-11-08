@@ -1,0 +1,17 @@
+* installing *source* package ‘dhclus’ ...
+** R
+** preparing package for lazy loading
+Warning: replacing previous import ‘eucmetric’ when loading ‘icav’
+Warning: replacing previous import ‘mclapply’ when loading ‘multicore’
+Warning: replacing previous import ‘mcparallel’ when loading ‘multicore’
+Warning: replacing previous import ‘pvec’ when loading ‘multicore’
+** help
+*** installing help indices
+** building package indices
+** testing if installed package can be loaded
+Warning: replacing previous import ‘eucmetric’ when loading ‘icav’
+Warning: replacing previous import ‘mclapply’ when loading ‘multicore’
+Warning: replacing previous import ‘mcparallel’ when loading ‘multicore’
+Warning: replacing previous import ‘pvec’ when loading ‘multicore’
+
+* DONE (dhclus)
