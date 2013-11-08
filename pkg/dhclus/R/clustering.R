@@ -108,7 +108,7 @@ select.sigma<-function(Dist,method,kmax=10,centers,Ca,debug)
   if(method!=3){
     pots<-1/c(sapply(1:Ca,function(x)(2^x)))  
     if (method==1) pots<-c(9:6/10,pots)[1:8]
-    print(pots)  
+    if (debug) print(pots)  
     tmu<-quantile(Dist,probs=pots)
     C<-length(tmu)
   }
@@ -195,7 +195,7 @@ select.sigma<-function(Dist,method,kmax=10,centers,Ca,debug)
       ms <- which.min(diss )
       
       pms<-ms
-      print(pms)
+     if (debug) print(pms)
       if(debug){
         print(diss)
         print(bal)

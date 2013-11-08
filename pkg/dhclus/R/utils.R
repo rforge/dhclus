@@ -80,7 +80,7 @@ labels_level<-function(class,i){
   c<-possibles(i) 
   
   ls<-((1:c)+2^i)-1
-  print(ls)
+
   m<-matrix(0,nrow=length(class),ncol=c/2)
   j<-1
   while(length(ls)>1){
@@ -88,7 +88,7 @@ labels_level<-function(class,i){
     lmax<-max(ls)
     cl<-c(lmax,lmax-1)
     ls<-ls[!is.element(ls,cl)]
-    print(ls)
+
     ind<-index[is.element(labs,cl)]    
     if(length(ind)>0){
       m[ind,j]<-floor((labs[ind])/2)
