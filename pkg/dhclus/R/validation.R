@@ -3,13 +3,14 @@
 test<-function(data,result,...)
 {
   return(test_gap(data,labels=result$clusters,sigma=result$sigma,sigmas=result$sigmas,k=result$val,...))
+  
 }
 
 
 #test gap statistics 
 # metric is used for compute the WSS : 1 pknng, 2 icav, 3 euclidean
 
-test_gap<- function(data, labels, NumRef=100,sigmas=1,k=7,sigma=1,  method=2, debug=F,metric=2)
+test_gap<- function(data, labels, NumRef=100,sigmas=1,k=7,sigma=1,  method=2, debug=FALSE,metric=2)
 { 
   
   B<-NumRef
@@ -22,7 +23,7 @@ test_gap<- function(data, labels, NumRef=100,sigmas=1,k=7,sigma=1,  method=2, de
   
   
   D<-dim(dis)[1]
-  
+
   WSS[1]<- (withinsum2(dis, rep(1,D), diss=T))
   W[1]<- log(WSS[1])  
   WSS[2]<-sum(withinsum2(dis, labels, diss=T))
@@ -48,11 +49,11 @@ test_gap<- function(data, labels, NumRef=100,sigmas=1,k=7,sigma=1,  method=2, de
     X1<-z11  #%*% t(veigen)  # back transformed
     dx<- dist(X1)
     dx1<-as.matrix(dx)
-    
+ 
     dx<-if(metric==1) pknng(X1,k=k,diss=F,fixed.k=1, silent=T, MinGroup=0,penalize=1)
     else if(metric==2) mst2Path.Diss(as.matrix(dist(X1)))
     else as.matrix(dist(X1))
-     
+
     if (method==1||method==2){
       if(method==1 ) dx1<-pknng(X1,k=k,diss=F,fixed.k=1, silent=T, MinGroup=0,penalize=1)
       
@@ -61,6 +62,7 @@ test_gap<- function(data, labels, NumRef=100,sigmas=1,k=7,sigma=1,  method=2, de
       
       tmu<-quantile(dx,probs=pots)[sigmas]
       Sx1<-exp(-dx1^2/(2*tmu^2))
+
       #   Sx1<-exp(-dx^2/(2*sigma^2))
     }
     else {
@@ -85,6 +87,7 @@ test_gap<- function(data, labels, NumRef=100,sigmas=1,k=7,sigma=1,  method=2, de
       Ws[1]<- log(withinsum2(dx, rep(1,ncol(dx)), diss=T))
       Ws[2]<- log(sum(withinsum2(dx, labs$clusters,diss=T)))
     }
+
     rm(X1,z11,dx)
     # gc()
     return(as.double(Ws))
@@ -118,12 +121,11 @@ test_gap<- function(data, labels, NumRef=100,sigmas=1,k=7,sigma=1,  method=2, de
   
   cond<-GAP[1] <GAP[2]-GAP.sd[2]
   gap1<-abs(GAP[1]  -( GAP[2] -GAP.sd[2]))
-  res<-c(W,Elogw,GAP,GAP.sd)
-  names(res)<-c("OlogW", "E.logW", "Gap","Gap.sd")
+  res<-cbind(W,Elogw,GAP,GAP.sd)
+
   out <- list(res,cond,gap1)
   names(out)<-list("Gap_info", "cond", "gap")
-  #if(debug) 
-    print((out))
+  if(debug)   print((out))
   return (out)
 }
 

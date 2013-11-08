@@ -1,6 +1,6 @@
 Get.clusters<-function(data, index, diss=FALSE, debug=FALSE,method=2,...)
 {
-  
+
   if(method==1) {
     s<-select_k(data[index,],kmax=9,Ca=7,centers=2,debug=debug)
     val<- s$k #sel2_k(data[index,])
@@ -31,7 +31,7 @@ Get.clusters<-function(data, index, diss=FALSE, debug=FALSE,method=2,...)
   }
   
   else 
-  { print(length(index))
+  { 
     Dist<-as.matrix(dist(data[index,]))
     
     re<-spectral.sep(Dist,method=method,centers=2,kmax=10,Ca=7,debug=debug)
@@ -377,11 +377,11 @@ select_k<-function(data, diss=FALSE,kmax=15,Ca,centers,debug)
     }
     
     rm(Dist) 
-    print(paste("dim ",l))
+    if (debug) print(paste("dim ",l))
     ks<-which.min(val)
     sigma<-sigmas[ks]
     psigma<-psigmas[ks]
-    print(paste("validity:", val))   
+   if (debug) print(paste("validity:", val))   
     err<-error[ks]
     ks<-ks+1
   }

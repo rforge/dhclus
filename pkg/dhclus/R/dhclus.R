@@ -1,4 +1,4 @@
-dhclus<- function(data, diss=FALSE,debug=FALSE,FUNCluster=Get.clusters, FUNTest=test,...)
+dhclus<- function(data, diss=FALSE,FUNCluster=Get.clusters, FUNTest=test,...)
 {
   ind <- 1:dim(data)[1]
   init_clusters <- ind
@@ -42,11 +42,11 @@ dhclus<- function(data, diss=FALSE,debug=FALSE,FUNCluster=Get.clusters, FUNTest=
   return(class)
 }
 
-calclus.spec <- function(data, index, kl , tags,   diss=FALSE, debug=FALSE, FUNCluster, FUNTest,...)
+calclus.spec <- function(data, index, kl , tags,   diss=FALSE,  FUNCluster, FUNTest,...)
   #1=pknng, 2 = rbf, 3= local scaling,
 {
   tags[index]<-kl
-  
+
   sc<-FUNCluster(data,index, ...)
   
   if(!sc$error){
@@ -61,7 +61,7 @@ calclus.spec <- function(data, index, kl , tags,   diss=FALSE, debug=FALSE, FUNC
   }
   else #spectral error
   {
-    print("Error")  
+   
     error <-1
   }
   
@@ -74,7 +74,7 @@ calclus.spec <- function(data, index, kl , tags,   diss=FALSE, debug=FALSE, FUNC
     klr<-kl
     if (length(left)>(3))
     {
-      bl <- calclus.spec (data,  index=left, 2*kll , tags,  diss=diss,debug=debug,FUNCluster,FUNTest,...) 
+      bl <- calclus.spec (data,  index=left, 2*kll , tags,  diss=diss,FUNCluster,FUNTest,...) 
       final <-bl
       tags[left]=bl[left]
       rm(bl)
@@ -84,7 +84,7 @@ calclus.spec <- function(data, index, kl , tags,   diss=FALSE, debug=FALSE, FUNC
     }
     if (length(right)>(3))
     {      
-      br <- calclus.spec (data,  index=right,  (2*klr+1) ,tags,diss=diss, debug=debug,FUNCluster,FUNTest,...)
+      br <- calclus.spec (data,  index=right,  (2*klr+1) ,tags,diss=diss, FUNCluster,FUNTest,...)
       tags[right]=br[right]
       rm(br)
     }
@@ -98,7 +98,7 @@ calclus.spec <- function(data, index, kl , tags,   diss=FALSE, debug=FALSE, FUNC
   
   else #No more clusters at this level
   {
-    if(debug) print("false")
+   
     tags[index]<-kl
     rm(sc)
   }
