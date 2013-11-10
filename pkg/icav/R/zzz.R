@@ -6,6 +6,6 @@
 #         File: zzz.R
 #
 
-.First.lib <- function(lib, pkg) {
-  library.dynam("icav", pkg, lib)
-}
+# .First.lib <- function(lib, pkg) {
+#   library.dynam("icav", pkg, lib)
+# }

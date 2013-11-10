@@ -98,7 +98,7 @@ icav.estimator.apply<-function(labels=NULL, x,dump=F){
 # 	print(labels)
 	D<-as.matrix(dist(x))
 	D.intra.1<-mst2Path.Diss(D); 
-	DMIN<-sum(.Call("icav_gap_withinSum",D.intra.1,as.integer(labels),unique(labels),length(labels),DUP=F))
+	DMIN<-sum(.Call("icav_gap_withinSum",D.intra.1,as.integer(labels),unique(labels),length(labels),DUP=F,PACKAGE=icav))
 
 	return(DMIN)
 }
@@ -108,7 +108,7 @@ if (is.null(labels)) stop("Check labels")
 
 	D<-as.matrix(dist(x))
 	D.intra.1<-mst2Path.Diss(D); 
-	DMIN<-sum(.Call("icav_gap_withinSum",D.intra.1,as.integer(labels),unique(labels),length(labels),DUP=F))
+	DMIN<-sum(.Call("icav_gap_withinSum",D.intra.1,as.integer(labels),unique(labels),length(labels),DUP=F,PACKAGE=icav))
     
 
 

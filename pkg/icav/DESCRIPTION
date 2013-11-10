@@ -5,5 +5,6 @@ Title: IC-ac
 Author: Ariel E. Baya <baya@cifasis-conicet.gov.ar>
 Maintainer: Ariel E. Baya <baya@cifasis-conicet.gov.ar>
 Depends:
+Imports: plotrix, multicore
 Description: Clustering package for data analisys.
 License:  GPL (>= 2)

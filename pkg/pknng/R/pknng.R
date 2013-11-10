@@ -32,7 +32,7 @@ else stop("Error\n")
 
 # print("get_k_neighbors")
 
-ret<-.Call("get_k_neighbors",X,c(dim(X)[1],dim(X)[2],k),DUP=F)
+ret<-.Call("get_k_neighbors",X,c(dim(X)[1],dim(X)[2],k),DUP=F,PACKAGE=pknng)
 
 # print("fin get_k_neighbors")
 # print(dim(X))
@@ -43,7 +43,7 @@ qq<-quantile(v.ret,probs=c(0.25,0.75))
 rm(v.ret)
 sg<-qq[2]+(qq[2]-qq[1])*1.5
 
-ret<-.Call("make_symmetric",as.list(ret),c(dim(X)[1],k),sg,DUP=F)
+ret<-.Call("make_symmetric",as.list(ret),c(dim(X)[1],k),sg,DUP=F,PACKAGE=pknng)
 
 #  cat("\n\n")
 #  print(qq)
@@ -97,9 +97,9 @@ rm(addons,len)
 # print("connect")
 MinGroup<-0
 if (conn!="all"){
-if (conn=="one") addons<-.Call("connect_groups",as.list(ret),X,as.integer(c(dim(X)[1], dim(X)[2], conntype, penalize, metric, cte, MinGroup )),as.double(mu),DUP=F)
+if (conn=="one") addons<-.Call("connect_groups",as.list(ret),X,as.integer(c(dim(X)[1], dim(X)[2], conntype, penalize, metric, cte, MinGroup )),as.double(mu),DUP=F,PACKAGE=pknng)
 else if (conn=="ttr"){
- addons<-.Call("connect_groups_oneToTheRest",as.list(ret),X,as.integer(c(dim(X)[1],dim(X)[2],conntype,penalize,metric,cte)),as.double(mu),DUP=F)
+ addons<-.Call("connect_groups_oneToTheRest",as.list(ret),X,as.integer(c(dim(X)[1],dim(X)[2],conntype,penalize,metric,cte)),as.double(mu),DUP=F,PACKAGE=pknng)
 }
 # print("fin connect")
 # print(addons)
@@ -117,14 +117,14 @@ ret[[1]][[conns[i,2]]]<-as.double(c(ret[[1]][[conns[i,2]]],conns[i,3]))
 }
 }
 }
-else addons<-.Call("connect_groups_all",as.list(ret),X,as.integer(c(dim(X)[1],dim(X)[2],conntype,penalize,metric,cte)),as.double(mu),DUP=F)
+else addons<-.Call("connect_groups_all",as.list(ret),X,as.integer(c(dim(X)[1],dim(X)[2],conntype,penalize,metric,cte)),as.double(mu),DUP=F,PACKAGE=pknng)
 rm(X)
 # print(ret[[2]])
 # cat("\n\n")
 # print("all_dijkstra")
-if(path=="dijkstra")d_matrix<-.Call("all_dijkstra",as.list(ret),c(m),DUP=F)
+if(path=="dijkstra")d_matrix<-.Call("all_dijkstra",as.list(ret),c(m),DUP=F,PACKAGE=pknng)
 else if(path=="floyd"){
-d_matrix<-.Call("pknng_floyd",as.list(ret),as.integer(c(m,0)),DUP=F)
+d_matrix<-.Call("pknng_floyd",as.list(ret),as.integer(c(m,0)),DUP=F,PACKAGE=pknng)
 }
 else stop("error\n path == dijkstra or floyd")
 # print("fin all_dijkstra")

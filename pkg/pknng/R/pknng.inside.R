@@ -25,7 +25,7 @@ else stop("Error\n")
 
 # print("get_k_neighbors")
 
-ret<-.Call("get_k_neighbors",X,c(dim(X)[1],dim(X)[2],k),DUP=F)
+ret<-.Call("get_k_neighbors",X,c(dim(X)[1],dim(X)[2],k),DUP=F,PACKAGE=pknng)
 
 # print("fin get_k_neighbors")
 # print(dim(X))
@@ -36,7 +36,7 @@ v.ret<-unlist(ret[[1]])
 qq<-quantile(v.ret,probs=c(0.25,0.75)) 
 rm(v.ret)
 sg<-qq[2]+(qq[2]-qq[1])*1.5
-ret.2<-.Call("make_symmetric",as.list(ret),c(dim(X)[1],k),sg,DUP=F)
+ret.2<-.Call("make_symmetric",as.list(ret),c(dim(X)[1],k),sg,DUP=F,PACKAGE=pknng)
 
 if (fixed.k==0){
 #  print("make_symmetric")
@@ -61,7 +61,7 @@ mu<-mu[fixed.k+1]
 
 metric<-0
 if (MinGroup > 0){
-addons<-.Call("outlayer_merger",as.list(ret.2),X,as.integer(c(dim(X)[1], dim(X)[2], conntype, penalize, metric, cte, MinGroup)),DUP=F)
+addons<-.Call("outlayer_merger",as.list(ret.2),X,as.integer(c(dim(X)[1], dim(X)[2], conntype, penalize, metric, cte, MinGroup)),DUP=F,PACKAGE=pknng)
 len<-length(addons[[length(addons)]])
 if (len>1){
 conns<-as.matrix(addons[[length(addons)]])
@@ -77,16 +77,16 @@ ret.2[[1]][[conns[i,2]]]<-as.double(c(ret.2[[1]][[conns[i,2]]],conns[i,3]))
 
 MinGroup<-0
 if (conn!="all"){
-if (conn=="one") addons<-.Call("connect_groups",as.list(ret.2),X,as.integer(c(dim(X)[1], dim(X)[2], conntype, penalize, metric, cte, MinGroup )),as.double(mu),DUP=F)
+if (conn=="one") addons<-.Call("connect_groups",as.list(ret.2),X,as.integer(c(dim(X)[1], dim(X)[2], conntype, penalize, metric, cte, MinGroup )),as.double(mu),DUP=F,PACKAGE=pknng)
 else if (conn=="ttr"){
- addons<-.Call("connect_groups_oneToTheRest",as.list(ret.2),X,as.integer(c(dim(X)[1],dim(X)[2],conntype,penalize,metric,cte)),as.double(mu),DUP=F)
+ addons<-.Call("connect_groups_oneToTheRest",as.list(ret.2),X,as.integer(c(dim(X)[1],dim(X)[2],conntype,penalize,metric,cte)),as.double(mu),DUP=F,PACKAGE=pknng)
 }
 }
-else addons<-.Call("connect_groups_all",as.list(ret.2),X,as.integer(c(dim(X)[1],dim(X)[2],conntype,penalize,metric,cte)),as.double(mu),DUP=F)
+else addons<-.Call("connect_groups_all",as.list(ret.2),X,as.integer(c(dim(X)[1],dim(X)[2],conntype,penalize,metric,cte)),as.double(mu),DUP=F,PACKAGE=pknng)
 
 
-ret<-.Call("connect_kneigbours",as.list(ret.2),as.integer(c(dim(X)[1],dim(X)[2])),DUP=F)
-c.2<-.Call("tagger",as.list(ret),c(dim(X)[1],0),DUP=F)
+ret<-.Call("connect_kneigbours",as.list(ret.2),as.integer(c(dim(X)[1],dim(X)[2])),DUP=F,PACKAGE=pknng)
+c.2<-.Call("tagger",as.list(ret),c(dim(X)[1],0),DUP=F,PACKAGE=pknng)
 
 ret.neig<-list()
 ret.neig$tag<-c.2
@@ -123,7 +123,7 @@ else stop("Error\n")
 
 # print("get_k_neighbors")
 
-ret<-.Call("get_k_neighbors",X,c(dim(X)[1],dim(X)[2],k),DUP=F)
+ret<-.Call("get_k_neighbors",X,c(dim(X)[1],dim(X)[2],k),DUP=F,PACKAGE=pknng)
 
 # print("fin get_k_neighbors")
 # print(dim(X))
@@ -142,15 +142,15 @@ sg<-qq[2]+(qq[2]-qq[1])*1.5
 # print(dim(ret[[1]]))
 #print(dim(X))
 #  print("make_symmetric")
-ret.2<-.Call("make_symmetric",as.list(ret),c(dim(X)[1],k),sg,DUP=F)
+ret.2<-.Call("make_symmetric",as.list(ret),c(dim(X)[1],k),sg,DUP=F,PACKAGE=pknng)
 # print(ret.2[[2]])
 # cat("\n\n")
 # print(sort(ret.2[[2]][[1]]))
 # cat("\n")
 # print(min(ret.2[[2]][[1]]))
 # print(sort(ret.2[[2]][[min(ret.2[[2]][[1]])]]))
-ret<-.Call("connect_kneigbours",as.list(ret.2),as.integer(c(dim(X)[1],dim(X)[2])),DUP=F)
-c.2<-.Call("tagger",as.list(ret),c(dim(X)[1],0),DUP=F)
+ret<-.Call("connect_kneigbours",as.list(ret.2),as.integer(c(dim(X)[1],dim(X)[2])),DUP=F,PACKAGE=pknng)
+c.2<-.Call("tagger",as.list(ret),c(dim(X)[1],0),DUP=F,PACKAGE=pknng)
 
 return(c.2)
 }
@@ -158,8 +158,8 @@ return(c.2)
 NVI.list<-function(class.list,total.points,OMP=T){
 l<-length(class.list)
 
-if (OMP) VI.list<-.Call("NMI_intersect_l_OMP",as.list(class.list),c(total.points,length(class.list)),DUP=F)
-else VI.list<-.Call("NMI_intersect_l",as.list(class.list),c(total.points,length(class.list)),DUP=F)
+if (OMP) VI.list<-.Call("NMI_intersect_l_OMP",as.list(class.list),c(total.points,length(class.list)),DUP=F,PACKAGE=pknng)
+else VI.list<-.Call("NMI_intersect_l",as.list(class.list),c(total.points,length(class.list)),DUP=F,PACKAGE=pknng)
 
 return(VI.list)
 }

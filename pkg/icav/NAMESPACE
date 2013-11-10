@@ -14,4 +14,8 @@ export("mst2Path.Diss",
 	"eucmetric",
 	"withinSum"
 )
+import(
+  plotrix,
+  multicore
+)
 useDynLib(icav)

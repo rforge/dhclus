@@ -74,8 +74,9 @@ SEXP icav_Matrix_sort(SEXP _M,SEXP Param)
 	M = REAL(_M); param = INTEGER(Param);
 	PROTECT(mimat = allocMatrix(REALSXP,param[0],param[1]));
 	mm=REAL(mimat);
+  #ifdef USE_OPENMP    // md EEV 10-11-2013  
 	MAX_T = omp_get_max_threads();
-
+#endif
 	//we order the cols
 	for(i=0;i<param[1];i++){
 	  _COL = i*param[0];
