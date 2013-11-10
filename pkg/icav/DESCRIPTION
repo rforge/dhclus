@@ -8,3 +8,4 @@ Depends:
 Imports: plotrix, multicore
 Description: Clustering package for data analisys.
 License:  GPL (>= 2)
+BugReports:<baya@cifasis-conicet.gov.ar>

@@ -7,3 +7,4 @@ Maintainer: Ariel E. Baya <baya@cifasis-conicet.gov.ar>
 Depends: 
 Description: Clustering package for data analisys.
 License:  GPL (>= 2)
+BugReports:<baya@cifasis-conicet.gov.ar>
