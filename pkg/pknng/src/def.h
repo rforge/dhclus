@@ -17,6 +17,7 @@
 #include "list.h"
 #include "fib.h"
 #include "fibpriv.h"
+#include "mix.h"
 
 #define xor(x,y) (x||y)&&(!(x&&y))
 #define MINDOUBLE DBL_MIN

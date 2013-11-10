@@ -13,7 +13,7 @@ simulating from a reference distribution.
 
 \usage{
 test_gap(data, labels, NumRef=100, sigmas=1,
-k=7, sigma=1,  method=2, debug=F, metric=2)
+k=7, sigma=1,  method=2, debug=FALSE, metric=2)
 }
 
 \arguments{

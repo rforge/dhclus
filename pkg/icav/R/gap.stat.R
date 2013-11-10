@@ -103,7 +103,7 @@ gapStat.mc <- function (data, class = rep(1, nrow(data)),k.max = 20, M = 100, cl
 # 		for (j in 1:NCOL) {
 # 			z1[, j] <- runif(NData, min = Min.x[j], max = Max.x[j])
 # 		}
-		z1<- matrix( unlist(lapply(1:NCOL, do.rand.matrix, NData, Min.x, Max.x) ) , nc=NCOL, nr=NData )
+		z1<- matrix( unlist(lapply(1:NCOL, do.rand.matrix, NData, Min.x, Max.x) ) , ncol=NCOL, nrow=NData )
 		if (clust.num>1){
 			clust.null<-clustering(z1, clust.num); 
 			ws<-withinSum(z1,clust.null)
