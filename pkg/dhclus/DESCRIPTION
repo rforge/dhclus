@@ -7,8 +7,8 @@ Author: Erica Vidal
 Maintainer: Erica Vidal <ericavidal@gmail.com>
 OS_type: unix
 SystemRequirements: POSIX-compliant OS
-Depends: pknng
-Imports: cluster, e1071, parallel, icav, multicore
+Depends: 
+Imports: cluster, e1071, parallel, icav, multicore, pknng
 Description: Divisive hierarchical clustering algorithm with automatic determination of components.
 License: GPL (>= 3)
 URL: http://dhclus.r-forge.r-project.org/

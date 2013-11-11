@@ -98,7 +98,7 @@ icav.estimator.apply<-function(labels=NULL, x,dump=F){
 # 	print(labels)
 	D<-as.matrix(dist(x))
 	D.intra.1<-mst2Path.Diss(D); 
-	DMIN<-sum(.Call("icav_gap_withinSum",D.intra.1,as.integer(labels),unique(labels),length(labels),DUP=F,PACKAGE="icav"))
+	DMIN<-sum(.Call("icav_gap_withinSum",D.intra.1,as.integer(labels),unique(labels),length(labels),DUP=F))
 
 	return(DMIN)
 }
@@ -108,7 +108,7 @@ if (is.null(labels)) stop("Check labels")
 
 	D<-as.matrix(dist(x))
 	D.intra.1<-mst2Path.Diss(D); 
-	DMIN<-sum(.Call("icav_gap_withinSum",D.intra.1,as.integer(labels),unique(labels),length(labels),DUP=F,PACKAGE="icav"))
+	DMIN<-sum(.Call("icav_gap_withinSum",D.intra.1,as.integer(labels),unique(labels),length(labels),DUP=F))
     
 
 
@@ -195,15 +195,15 @@ if(k.max < 2) stop("'k.max' has to be >= 2")
   do.rand.matrix<-function(dim.i,N.data,min.val,max.val){return(runif(N.data,min.val[dim.i],max.val[dim.i]))}
   
   foo<-function(val,N,min.x,max.x,kmax) {
-	z1<- matrix( unlist(lapply(1:length(min.x), do.rand.matrix, N, min.x, max.x) ) , ncol=length(min.x), nrow=N )
+	z1<- matrix( unlist(lapply(1:length(min.x), do.rand.matrix, N, min.x, max.x) ) , nc=length(min.x), nr=N )
 	cl<-clustering(z1, k.max = k.max)
 	cl.val<-apply(cbind(1,cl), 2, icav.estimator.apply, z1)
 	return(cl.val)
   }
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # 
-clust.null<-mclapply(1:M,foo,N,min.x,max.x,k.max,mc.cores=mc.cores)
+clust.null<-mclapply(1:M,foo,N,min.x,max.x,kmax,mc.cores=mc.cores)
 
-D.null<- t(matrix(unlist(clust.null),ncol=M,nrow=k.max))
+D.null<- t(matrix(unlist(clust.null),nc=M,nr=k.max))
     
 res<-list()
 
