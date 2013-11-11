@@ -1,7 +1,8 @@
 # make
 #
 CC = gcc
-CFLAGS = -march=core2 -mavx -fpic -O3 -ftree-vectorize -std=gnu99 -fgnu89-inline -w
+#CFLAGS = -mavx -fpic -O3 -ftree-vectorize -std=gnu99 -fgnu89-inline -w
+CFLAGS= -fpic -O3 -std=gnu99 -w
 SHFLAG = -shared
 HDIR = /usr/share/R/include
 LDIR = /usr/lib/R/lib
