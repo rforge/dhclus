@@ -5,6 +5,8 @@ Title: DHclus
 Authors@R: person("Erica Vidal", "Developer", role = c("aut", "cre"), email = "ericavidal@gmail.com")
 Author: Erica Vidal
 Maintainer: Erica Vidal <ericavidal@gmail.com>
+OS_type: unix
+SystemRequirements: POSIX-compliant OS
 Depends: pknng
 Imports: cluster, e1071, parallel, icav, multicore
 Description: Divisive hierarchical clustering algorithm with automatic determination of components.
