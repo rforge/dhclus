@@ -1,6 +1,7 @@
-Get.clusters<-function(data, index, diss=FALSE, debug=FALSE,method=2,...)
+Get.clusters<-function(data, index, diss=FALSE,sim=FALSE, debug=FALSE,method=2,...)
 {
-
+  
+ if(!sim){
   if(method==1) {
     s<-select_k(data[index,],kmax=9,Ca=7,centers=2,debug=debug)
     val<- s$k #sel2_k(data[index,])
@@ -32,8 +33,9 @@ Get.clusters<-function(data, index, diss=FALSE, debug=FALSE,method=2,...)
   
   else 
   { 
-    Dist<-as.matrix(dist(data[index,]))
-    
+    if(!diss)    Dist<-as.matrix(dist(data[index,]))
+    else Dist<-data
+
     re<-spectral.sep(Dist,method=method,centers=2,kmax=10,Ca=7,debug=debug)
     sc<-re[[1]]
     Sx1<-re[[2]]
@@ -44,7 +46,13 @@ Get.clusters<-function(data, index, diss=FALSE, debug=FALSE,method=2,...)
     sc$sigmas<-psigma
     sc$error<-FALSE
   } 
-  
+  }
+  else {
+	Sx1<-data
+	sc<-spectral.clust(Sx1, 2)
+	sc$error<-FALSE
+	
+   }
   if(!sc$specc.error){
     outliers<-index[sc$is.outlier]
     
