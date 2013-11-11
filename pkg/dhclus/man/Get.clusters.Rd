@@ -25,7 +25,7 @@ for Local Scaling.
 a list with the next components
 \item{clusters}{ vector of length n = length(index) of integers in 1:2 determining the clustering of the data.}
 \item{val}{.}
-\item{sigma}{.}
+\item{sigma}{value}
 \item{sigmas}{.}
 \item{error}{boolean value indicates if an error whether an error has occurred to group items}
 
