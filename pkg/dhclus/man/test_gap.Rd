@@ -23,7 +23,7 @@ k=7, sigma=1,  method=2, debug=FALSE, metric=2)
 \item{debug}{Logical, determining if "progress" output should be printed. }
 \item{method}{Integer indicating which method will be used to compute the 
 similarity matrix: 1 for RBF with pknng, 2 for RBF with euclidean and 3
-for Local Scaling, 4 }
+for Local Scaling }
 \item{sigma}{.}
 \item{sigmas}{.}
 \item{k}{.}
