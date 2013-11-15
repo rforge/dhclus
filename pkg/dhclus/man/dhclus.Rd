@@ -53,11 +53,11 @@ clusters<- dhclus(data,debug=FALSE)
 plot(data, col=clusters$tags)
 
 ## Using spectral clustering with Local Scaling
-clusters<- dhclus(data,debug=FALSE, method=3)
+#clusters<- dhclus(data,debug=FALSE, method=3)
 
 ## Using spectral clustering with pknng and test-gap-pknng
-library(pknng)
-clusters<- dhclus(data, debug=FALSE, method=1,metric=1)
+##library(pknng)
+##clusters<- dhclus(data, debug=FALSE, method=1,metric=1)
 
 ##Using own created functions
 # 
