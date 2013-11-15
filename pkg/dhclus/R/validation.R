@@ -75,9 +75,16 @@ test_gap<- function(data, labels, NumRef=100,sigmas=1,k=7,sigma=1,  method=2, de
         #    Sx1 <- rbf.dot.multiscale2(dx,sigma)
       }}
 
+    if(metric!=3){
       labs<-spectral.clust(Sx1, 2)
       iind<-1:length(labs$yi[,2])
       outliers<-iind[labs$is.outlier]
+ 	}
+	else {
+	labs<-list()
+	labs$clusters<-pam(dx,2)$clustering
+	outliers<-list()
+	}
 
     if(length(outliers)>0) 
     { Ws<-NA

@@ -48,6 +48,7 @@ data<-cbind(rnorm(70,0,1),rnorm(70,0,1),rep(1,70))
 data<-rbind(data, cbind(rnorm(50,0,1)+6.5,rnorm(50,0,1),rep(2,50)))
 data<-rbind(data, cbind(rnorm(30,0,1)-5,rnorm(30,0,1)-5,rep(3,30)))
 
+library(dhclus)
 clusters<- dhclus(data,debug=FALSE)
 plot(data, col=clusters$tags)
 
@@ -55,6 +56,7 @@ plot(data, col=clusters$tags)
 clusters<- dhclus(data,debug=FALSE, method=3)
 
 ## Using spectral clustering with pknng and test-gap-pknng
+library(pknng)
 clusters<- dhclus(data, debug=FALSE, method=1,metric=1)
 
 ##Using own created functions

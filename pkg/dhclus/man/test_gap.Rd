@@ -31,7 +31,9 @@ for Local Scaling }
 }
 \value{
 a list with the next components
-\item{Gap_info}{a matrix with 2 rows and 4 columns, named "OlogW", "E.logW", "Gap", and "Gap.sd", where Gap = E.logW - ologW, and Gap.sd corresponds to the standard error of gap, Gap.sd[k]=s[k], where s[k] := sqrt(1 + 1/B) sd^*(Gap[]), and sd^*() is the standard deviation of the simulated (“bootstrapped”) gap values.}
+\item{Gap_info}{a matrix with 2 rows and 4 columns, named "OlogW", "E.logW", "Gap", and "Gap.sd", 
+where Gap = E.logW - ologW, and Gap.sd corresponds to the standard error of gap, Gap.sd[k]=s[k], 
+where s[k] := sqrt(1 + 1/B) sd^*(Gap[]), and sd^*() is the standard deviation of the simulated ("bootstrapped") gap values.}
 \item{cond}{Boolean value result of the evaluation of the condition Gap[1]<Gap[2]-Gap.sd[2].}
 \item{gap}{Distance between Gap[1] and Gap[2]-Gap.sd[2].}
 
