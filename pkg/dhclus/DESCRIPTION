@@ -1,5 +1,5 @@
 Package: dhclus
-Version: 0.1-0
+Version: 0.1-1
 Date: 2013-07-11
 Title: DHclus
 Authors@R: person("Erica Vidal", "Developer", role = c("aut", "cre"), email = "ericavidal@gmail.com")
