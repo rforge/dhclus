@@ -415,7 +415,7 @@ select_k<-function(data, diss=FALSE,kmax=15,Ca,centers,debug)
 ##Spectral clustering with Lrw Laplacian
 ## W is a similarity matrix
 
-spectral.clust<-function(W, centers){
+spectral.clust2<-function(W, centers){
   if (length(centers)==1) nc<-centers
   else nc<-dim(centers)[1]
   BIG.NUM<-10e100
@@ -482,7 +482,7 @@ spectral.clust<-function(W, centers){
   return(res)
 }
 
-spectral.clust2<-function(W, centers){
+spectral.clust<-function(W, centers){
   if (length(centers)==1) nc<-centers
   else nc<-dim(centers)[1]
   BIG.NUM<-10e100
