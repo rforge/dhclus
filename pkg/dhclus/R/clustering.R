@@ -422,6 +422,73 @@ spectral.clust<-function(W, centers){
   N<-dim(W)[1]
   ERROR.SPECC<-FALSE 
   diag(W)<-0
+  d<-1/sqrt(rowSums(W))
+  
+  bool.inf<-rep(FALSE,N)
+  if(any(d==Inf)  ){
+    bool.inf<-is.infinite(d)
+    
+    if(any(bool.inf)){
+      inf.clusters<-rep(0,N)
+      inf.clusters[bool.inf]<-1:sum(bool.inf)
+      W<-W[!bool.inf,!bool.inf]
+      d<-d[!bool.inf]
+    }   
+  }
+  
+  
+  if(!any(d==Inf) && !any(is.na(d)) && length(d)>0)
+  {   
+    #L.rw<- diag(d)%*%W 
+    L.sym <- diag(d)%*%W#  d * W %*% diag(d)
+    #ss<-eigen(L.rw,symmetric=F)$vectors[,1:nc]  
+    ss<-irlba(L.sym,nu=nc,nv=nc)$u
+    xi <- Re(ss)
+    yi<-xi  /sqrt(rowSums(xi^2))
+    
+    rm(W,ss)
+  }
+  else{ERROR.SPECC<-TRUE;yi<-0}
+  
+  if (any(is.na(yi)) || any(is.infinite(yi)) || ERROR.SPECC){
+    res<-list()
+    print("Spectral Error")
+    res$specc.error<-TRUE
+    res$singletons<-FALSE
+    #    res$sum.specc.withinss<- Inf
+    res$cluster<-rep(1,N)
+    res$clusters<-res$cluster
+    res$yi<-yi
+    res$is.outlier<-bool.inf
+    res$affinity.matrix<-NULL
+  }
+  else{
+    res<- pam(dist(yi[,2]),nc)
+    #    res$sum.specc.withinss<- sum(res$clusinfo[,3])
+    clusters<-res$clustering    
+    res$singletons<-FALSE
+    
+    if(any(bool.inf)){
+      inf.clusters[!bool.inf]<-res$clustering+sum(bool.inf)
+      clusters<-inf.clusters
+      res$singletons<-TRUE
+    }    
+    res$is.outlier<-bool.inf
+    res$clusters<-clusters
+    res$specc.error<-FALSE
+    res$yi<-yi
+    res$affinity.matrix<-L.sym
+  }
+  return(res)
+}
+
+spectral.clust2<-function(W, centers){
+  if (length(centers)==1) nc<-centers
+  else nc<-dim(centers)[1]
+  BIG.NUM<-10e100
+  N<-dim(W)[1]
+  ERROR.SPECC<-FALSE 
+  diag(W)<-0
   d<-1/rowSums(W)
   
   bool.inf<-rep(FALSE,N)
@@ -460,7 +527,8 @@ spectral.clust<-function(W, centers){
   }
   else{
     res<- pam(dist(yi[,1:nc]),nc)
-    #    res$sum.specc.withinss<- sum(res$clusinfo[,3])
+    
+#    res$sum.specc.withinss<- sum(res$clusinfo[,3])
     clusters<-res$clustering    
     res$singletons<-FALSE
     
@@ -477,4 +545,3 @@ spectral.clust<-function(W, centers){
   }
   return(res)
 }
-

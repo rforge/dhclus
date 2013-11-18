@@ -1,5 +1,25 @@
+poten<-function(A){
+  n<-dim(A)[1]
+z<-rep(1,n)
+w <-rep(0,n)
 
-
+i <- 0
+while (sqrt(t(z-w)%*%(z-w))  >  10^ (-14)){
+i <- i + 1
+w <- z
+z <- A%*%w
+l<-(t(z)%*%A%*%(z))/(t(z)%*%(z))
+  d<-rep(l,n)
+if (1/rcond(m<-(A- diag(d) )) >  10^ (-15))
+ z <- m%*%(1/z) 
+j<-which.max(z)
+z<-z/z[j]
+}
+autovalor <-  (t(z)%*%A%*%(z)) %*% (t(z)%*%(z))
+Error <- sqrt((A%*%z-autovalor*z)^2)
+out<-c(autovalor,Error,z)
+  return(out)
+}
 #Distsum: Computes the sum of pairwise distances
 
 Distsum<-function(dist){
