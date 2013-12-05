@@ -2,7 +2,7 @@
 
 dhclus<- function(data, diss=FALSE,debug=FALSE,file="Smatrix.pdf",FUNCluster=Get.clusters, FUNTest=test,...)
 {
-  library(lattice)
+#  library(lattice)
  
 #  trellis.device(dev=pdf, file=file) 
   n<-dim(data)[1]
@@ -41,14 +41,14 @@ dhclus<- function(data, diss=FALSE,debug=FALSE,file="Smatrix.pdf",FUNCluster=Get
     class$ltags<-class$tags
     class$tags<-relabel(class$tags)
   class$height<-max
-  pdf(file=file,paper="special",width=10,height=10)
+ # pdf(file=file,paper="special",width=10,height=10)
   #trellis.device(dev=pdf, file=file) 
-  colors <- colorRampPalette(c('green', 'red'))(256)
-  fig<-levelplot(class$Sx,col.regions=colors, cuts=100,scales=list(
-    x=list(rot=90)
-  ))
-  print(fig)
-  graphics.off()
+ # colors <- colorRampPalette(c('green', 'red'))(256)
+ # fig<-levelplot(class$Sx,col.regions=colors, cuts=100,scales=list(
+ #   x=list(rot=90)
+ # ))
+ # print(fig)
+ # graphics.off()
   return(class)
 }
 
