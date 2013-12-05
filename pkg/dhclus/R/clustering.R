@@ -1,9 +1,8 @@
-Get.clusters<-function(data, index, diss=FALSE,sim=FALSE, debug=FALSE,method=2,...)
+Get.clusters<-function(data, index, diss=FALSE, debug=FALSE,method,metric ,NumRef)
 {
   
- if(!sim){
   if(method==1) {
-    s<-select_k(data[index,],kmax=9,Ca=7,centers=2,debug=debug)
+    s<-select_k(data[index,],kmax=9,Ca=7,centers=2,debug=TRUE)
     val<- s$k #sel2_k(data[index,])
     
     if(debug)
@@ -17,10 +16,11 @@ Get.clusters<-function(data, index, diss=FALSE,sim=FALSE, debug=FALSE,method=2,.
     Sx1<-exp(-Dist^2/(2*sigma^2))
     if(!s$error){
       sc<-spectral.clust(Sx1, 2) 
-      sc$error<-FALSE
+      sc$error<-sc$specc.error
       sc$val<-val
       sc$sigma<-sigma
       sc$sigmas<-psigma
+      sc$Sx<-Sx1
     }
     else 
     {
@@ -32,27 +32,20 @@ Get.clusters<-function(data, index, diss=FALSE,sim=FALSE, debug=FALSE,method=2,.
   }
   
   else 
-  { 
-    if(!diss)    Dist<-as.matrix(dist(data[index,]))
-    else Dist<-data
-
-    re<-spectral.sep(Dist,method=method,centers=2,kmax=10,Ca=7,debug=debug)
-    sc<-re[[1]]
-    Sx1<-re[[2]]
-    sigma<-re[[3]]
-    psigma<-re[[4]]
-    sc$val<-2
+  { print(length(index))
+    Dist<-as.matrix(dist(data[index,]))
+    
+    re<-spectral.sep(Dist,method=method,centers=2,kmax=10,Ca=7,debug=TRUE)
+    sc<-re$sc
+    sigma<-re$sigma
+    psigma<-re$psigma
+    sc$val<-3
     sc$sigma<-sigma
     sc$sigmas<-psigma
-    sc$error<-FALSE
+    sc$error<-sc$specc.error
+    sc$Sx<-re$Sx
   } 
-  }
-  else {
-	Sx1<-data
-	sc<-spectral.clust(Sx1, 2)
-	sc$error<-FALSE
-	
-   }
+  
   if(!sc$specc.error){
     outliers<-index[sc$is.outlier]
     
@@ -66,8 +59,8 @@ Get.clusters<-function(data, index, diss=FALSE,sim=FALSE, debug=FALSE,method=2,.
                              
                              #relabel is needed if outliers are found
                              sc$clusters<-relabel(sc$clusters[!sc$is.outlier])
-#                              indi<- 1:dim(sc$yi)[1]
-#                              ind<-indi[!sc$is.outlier] 
+                             indi<- 1:dim(sc$yi)[1]
+                             ind<-indi[!sc$is.outlier] 
                              
                              
     }
@@ -76,7 +69,15 @@ Get.clusters<-function(data, index, diss=FALSE,sim=FALSE, debug=FALSE,method=2,.
   return(sc)
 }
 
+#EClustering functions
 
+Myclustering<-function(data,index,...)
+{
+  res<-kmeans(data[index,],2)
+  res$error<-FALSE
+  res$clusters<-res$cluster
+  return(res)
+}
 
 #######################
 first_nonzero<-function(v,k){
@@ -101,32 +102,34 @@ rbf.dot.multiscale2 <-function(Dist,sigma)
 }
 
 #### Make Local Scaling similarity matrix
-# rbf.dot.multiscale<-function(data,scale.vector){
-#   if(dim(data)[2]!=length(scale.vector)) stop("Length Missmatch")
-#   euc<-.Call("rbf_dot_multiscaled",data, c(dim(data)[1],dim(data)[2]),as.double(scale.vector),DUP=F)
-#   return(euc)
-# }
+rbf.dot.multiscale<-function(data,scale.vector){
+  if(dim(data)[2]!=length(scale.vector)) stop("Length Missmatch")
+  euc<-.Call("rbf_dot_multiscaled",data, c(dim(data)[1],dim(data)[2]),as.double(scale.vector),DUP=F)
+  return(euc)
+}
 
 ##Select sigma for gaussian kernel
 select.sigma<-function(Dist,method,kmax=10,centers,Ca,debug)
 {
   kmax=min(kmax,floor(dim(Dist)[1]/2)+1)
+  print(c(kmax,dim(Dist)[1]))
   Ca<-8
   error<-0
   if(method!=3){
     pots<-1/c(sapply(1:Ca,function(x)(2^x)))  
-    if (method==1) pots<-c(9:6/10,pots)[1:8]
-    if (debug) print(pots)  
+    pots<-c(9:6/10,pots)#[1:8]
+    #if (method==1) pots<-pots[1:7]
+    print(pots)  
     tmu<-quantile(Dist,probs=pots)
-    C<-length(tmu)
+    C<-length(tmu)+1
   }
   else { 
     sort.X<-apply(Dist,1,sort) 
     if(dim(Dist)[1] > (kmax+2)){ 
-      C<-kmax
-      tmu<-rep(1,kmax)
+      C<-kmax+1
+     # tmu<-rep(1,kmax)
       ttmu<-sort.X[3:(kmax+2),]    
-      
+   
     }
     else 
     {
@@ -135,7 +138,7 @@ select.sigma<-function(Dist,method,kmax=10,centers,Ca,debug)
        tmu<-0
        ttmu<-sort.X[2,]}
       else {error <-1 
-            print("error")}
+            print("error: k is greathed than dimension")}
     }}
     
     if(!error){
@@ -144,161 +147,187 @@ select.sigma<-function(Dist,method,kmax=10,centers,Ca,debug)
       w1 <-(rep(Inf,C))
       bal<-(rep(0,C))
       i<-1
-      
+      print(C)
       while (i <C)
-      {
+      { 
         if(method==3) {
           ka <- rbf.dot.multiscale2(Dist,ttmu[i,])
-          
         }
         else ka <-exp((-(Dist^2))/(2*(tmu[i]^2)))
+        
         diag(ka) <- 0  
         d <- 1/(rowSums(ka))
         
         if(!any(d==Inf) && !any(is.na(d)))# && (max(d)[1]-min(d)[1] < 10^4))
         {    
           res <- spectral.clust(ka,centers)
-          
-          if(sum(res$is.outlier)>0){
-            res$clusters<-relabel(res$clusters)
-            indi<- 1:dim(res$yi)[1]
-            ind<-indi[!res$is.outlier]   
-            print("outliers:")
-            print(indi[res$is.outlier])
-            ind<-ind[!is.na(ind)]
-            res$yi<-res$yi[ind,]
-            res$clusters<-relabel(res$clusters[ind])
+          if(!res$specc.error){
             
-          }else  ind<- 1:dim(res$yi)[1]
-          
-          if(length(unique(res$clusters))==centers){
+            if(sum(res$is.outlier)>0)
+              {
+              res$clusters<-relabel(res$clusters)
+              indi<- 1:dim(res$yi)[1]
+              ind<-indi[!res$is.outlier]   
+              print("outliers:")
+              print(indi[res$is.outlier])
+              ind<-ind[!is.na(ind)]
+              res$yi<-res$yi[ind,]
+              res$clusters<-relabel(res$clusters[ind])        
+            }else  ind<- 1:dim(res$yi)[1]
             
-            ws2<-sum(withinsum2(res$yi[,1:(centers)],res$clusters))
-            ws1<-withinsum2(res$yi[,1:(centers)],rep(1,length(res$clusters)))
-            w2[i]<-ws2
-            w1[i]<-ws1
-            diss[i] <-ws2 /abs(ws1-ws2)
-            
-            li<-rep(0,centers)
-            for(h in 1:centers) li[h]<-sum(res$clusters==h)    
-            bal[i]=min(li)/max(li)
-            if(min(li)<=2)
-            {
-              print("singletons detected")
-              diss[i]<-Inf
+            if(length(unique(res$clusters))==centers)
+            { 
+              ws2<-sum(withinsum2(res$yi[,1:(centers)],res$clusters))
+              ws1<-withinsum2(res$yi[,1:(centers)],rep(1,length(res$clusters)))
+              w2[i]<-ws2
+              w1[i]<-ws1
+              diss[i] <-ws2# /abs(ws1-ws2)       
+      
+              li<-rep(0,centers)
+              for(h in 1:centers) li[h]<-sum(res$clusters==h)    
+              bal[i]=min(li)/max(li)
+              if(min(li)<=2)
+              {
+                print("singletons detected")
+                print("Del11")
+                diss[i]<-Inf
+                
+              } 
+
+              i<-i+1
+                
+              
             }
+            else {
+              print("Del22")
+              i<-i+1
+            }
+          }
+          else {
+            print("Error")
+            diss[i]<-Inf
             i<-i+1
-          } 
+          }}
           else 
-          {print("Del")
-           i<-i+1     
-           
-          } }
-        else 
-        {   print(paste ("Deleted2 ",i))
-            i<-i+1}
-      }
+          {   print(paste ("Deleted2 ",i))
+              i<-i+1}
+        }
       
-      
+      print(diss)
       ms <- which.min(diss )
-      
-      pms<-ms
-     if (debug) print(pms)
+      hb<-diss[ms]
+ 
       if(debug){
         print(diss)
         print(bal)
         if (method!=3)
           print(paste("selected ",ms,"sigma: ",tmu[ms]))
+        else print(paste("selected ",ms))
         
       }
-#       if(method!=3)
-#       {
-#         pots2<-c((   c(-1,-1,-1,1,1,1)/(2^c(13,11,9,9,11,13))) + pots[ms],pots[ms]) 
-#         print("segundo")
-#         print(pots2)
-#         tmu<-c(quantile(Dist,probs=pots2))
-#         diss <-(rep(Inf,length(tmu)))
-#         w2 <-(rep(Inf,length(tmu)))
-#         w1 <-(rep(Inf,length(tmu)))
-#         bal<-(rep(0,length(tmu)))
-#         i<-1
-#         #segundo barrido
-#         
-#         while (i <length(tmu)+1){
-#           ka <-exp((-(Dist^2))/(2*(tmu[i]^2)))
-#           diag(ka) <- 0  
-#           d <- 1/(rowSums(ka))
-#           
-#           if(!any(d==Inf) && !any(is.na(d))) #&& (max(d)[1]-min(d)[1] < 10^4))
-#           {    
-#             res <- spectral.clust(ka,centers)
-#             
-#             if(sum(res$is.outlier)>0){
-#               res$clusters<-relabel(res$clusters)
-#               indi<- 1:dim(res$yi)[1]
-#               ind<-indi[!res$is.outlier]   
-#               print("outliers:")
-#               print(indi[res$is.outlier])
-#               ind<-ind[!is.na(ind)]
-#               res$yi<-res$yi[ind,]
-#               res$clusters<-relabel(res$clusters[ind])
-#               
-#             }else  ind<- 1:dim(res$yi)[1]
-#             
-#             if(length(unique(res$clusters))==centers){
-#               
-#               ws2<-sum(withinsum2(res$yi[,1:centers],res$clusters))
-#               ws1<-withinsum2(res$yi[,1:centers],rep(1,length(res$clusters)))
-#               w2[i]<-ws2
-#               w1[i]<-ws1
-#               diss[i] <-ws2 #/abs(ws1-ws2)
-#               li<-rep(0,centers)
-#               for(h in 1:centers)
-#                 li[h]<-sum(res$clusters==h)
-#               bal[i]=min(li)/max(li)
-#               if(min(li)<=2)
-#               {
-#                 print("singleton detected")
-#                 diss[i]<-Inf
-#               }
-#               i<-i+1
-#             } 
-#             else 
-#             {print("Del")
-#              i<-i+1     
-#              
-#             } }
-#           else 
-#           {   print(paste ("Deleted2 ",i))
-#               i<-i+1}
-#           
-#         }
-#         
-#       }
-#       if(method!=3){
-#         ms <- which.min(diss )
-#       if(unique(bal)>1) print(":::Cambia") else print(":::NOcambia")
-#       }
-#       
-      if (method==3) {
-        if(dim(Dist)[1] > (kmax+2)) mu <-ttmu[(pms),]
-        else {mu<-ttmu
-              pms<-0}
+     #########################################################3 
+      ###second 
+      if(method!=3)
+      {   sel<-pots[ms]
+        if(ms==1) a<-(1-sel)/5
+        else a<-(pots[(ms-1)]-sel)/(ms+4)
+        if(ms==length(pots)) b<-sel/2
+        else b<-(sel - pots[(ms+1)])/(ms+2)
+        
+        pots2<-c(sel+2*a, sel+a,sel,sel-b,sel-2*b) 
+        print("segundo")
+        print(pots2)
+        tmu<-c(quantile(Dist,probs=pots2))
+        diss <-(rep(Inf,length(tmu)))
+        w2 <-(rep(Inf,length(tmu)))
+        w1 <-(rep(Inf,length(tmu)))
+        bal<-(rep(0,length(tmu)))
+        i<-1
+        #segundo barrido
+        
+        while (i <length(tmu)+1){
+          ka <-exp((-(Dist^2))/(2*(tmu[i]^2)))
+          diag(ka) <- 0  
+          d <- 1/(rowSums(ka))
+          
+          if(!any(d==Inf) && !any(is.na(d))) #&& (max(d)[1]-min(d)[1] < 10^4))
+          {    
+            res <- spectral.clust(ka,centers)
+            
+            if(sum(res$is.outlier)>0){
+              res$clusters<-relabel(res$clusters)
+              indi<- 1:dim(res$yi)[1]
+              ind<-indi[!res$is.outlier]   
+              print("outliers:")
+              print(indi[res$is.outlier])
+              ind<-ind[!is.na(ind)]
+              res$yi<-res$yi[ind,]
+              res$clusters<-relabel(res$clusters[ind])
+              
+            }else  ind<- 1:dim(res$yi)[1]
+            
+            if(length(unique(res$clusters))==centers){
+              
+              ws2<-sum(withinsum2(res$yi[,1:centers],res$clusters))
+              ws1<-withinsum2(res$yi[,1:centers],rep(1,length(res$clusters)))
+              w2[i]<-ws2
+              w1[i]<-ws1
+              diss[i] <-ws2 #/abs(ws1-ws2)
+              li<-rep(0,centers)
+              for(h in 1:centers)
+                li[h]<-sum(res$clusters==h)
+              bal[i]=min(li)/max(li)
+              if(min(li)<=2)
+              {
+                print("singleton detected")
+                diss[i]<-Inf
+              }
+              i<-i+1
+            } 
+            else 
+            {print("Del")
+             i<-i+1     
+             print(unique(res$clusters))
+            } }
+          else 
+          {   print(paste ("Deleted2 ",i))
+              i<-i+1}
+          
+        }
+        
       }
-      else{ ms<-which.min(diss  )
-            mu<-tmu[ms]
-            if(debug){  
+      if(method!=3){
+   
+      if(length(unique(bal))>1) print(":::Cambia") else print(":::NOcambia")
+      }
+      
+      if (method==3) {
+        if(dim(Dist)[1] > (kmax+2)) mu <-ttmu[(ms),]
+        else {mu<-ttmu
+              ms<-1}
+        print(ms)
+        if(is.infinite(diss[ms])) error<-1
+        else error<-0
+      }
+      else{ 
+        ms2<-which.min(diss)
+        mu<-tmu[ms2]
+        if(debug){  
               print(diss)
               print(bal)
-              print(paste("selected ",ms," sigma:",tmu[ms]))
+              print(paste("selected ",ms2," sigma:",tmu[ms2]))
               print("......................")
             }
+        ms<-list(ms,ms2)
+        if(is.infinite(diss[ms2]))    error<-1  
+        else {
+          error<-0
+              hb<-diss[ms2]
       }
-      if(is.infinite(diss[ms])) error<-1
-      else error<-0
-      
-      out<-list(diss,mu,tmu, diss[ms],ms,bal[ms],error,pms) 
-      names(out)<-list("diss","mu","tmu", "min","ms","bal","error","pms")
+
+      }
+      out<-list(diss,mu,hb, ms,error) 
+      names(out)<-list("diss","mu", "min","ms","error")
     } else out<-NULL
     return(out)
     
@@ -310,10 +339,10 @@ spectral.sep<-function(Dist,method,centers,kmax,Ca,debug)
 {
   s<-select.sigma(Dist, method=method,centers=centers,kmax=kmax,Ca=Ca,debug=debug)
   if(!is.null(s)){
-  tmu<-s$tmu
+
   diss<-s$diss
-  
-  if(length(diss[diss==Inf]) < length(tmu) && !s$error ) 
+
+  if( !s$error ) 
   {   
     mu<-s$mu
 
@@ -326,7 +355,7 @@ spectral.sep<-function(Dist,method,centers,kmax,Ca,debug)
     }
     sc<-spectral.clust(Sx, 2)  
     
-    psigma<-s$pms
+    psigma<-s$ms
   } 
   else
   {
@@ -336,7 +365,7 @@ spectral.sep<-function(Dist,method,centers,kmax,Ca,debug)
     sc$specc.error<-TRUE
     Sx<-list("")
     mu<-1
-    psigma<-1
+    psigma<-list(1,3)
     
   }}
   else 
@@ -347,11 +376,13 @@ spectral.sep<-function(Dist,method,centers,kmax,Ca,debug)
     sc$specc.error<-TRUE
     Sx<-list("")
     mu<-1
-    psigma<-1
+    psigma<-list(1,3)
     
   }
-  return(list(sc,Sx,mu,psigma))
 
+  out<-list(sc,Sx,mu,psigma)
+  names(out)<-list("sc","Sx","sigma","psigma")
+  return(out)
     
 }
 
@@ -365,7 +396,7 @@ select_k<-function(data, diss=FALSE,kmax=15,Ca,centers,debug)
   if(kmax > kmin){
     cant<-(kmax-kmin)+1
     sigmas<-vector(length=cant)
-    psigmas<-vector(length=cant)
+    psigmas<-list()
     val<-vector(length=cant)
     bal<-vector(length=cant)
     error<-vector(length=cant)
@@ -376,20 +407,19 @@ select_k<-function(data, diss=FALSE,kmax=15,Ca,centers,debug)
       print(kmin+i-1)
       s<-select.sigma(Dist,method=1,centers=centers,Ca=Ca,debug=debug)
       sigmas[i]<-s$mu
-      psigmas[i]<-s$pms
+      psigmas[[i]]<-s$ms
       val[i]<-s$min
-      bal[i]<-s$bal
       error[i]<-s$error
   #    if(bal[i]==1) i<-cant+1
       i<-i+1
     }
     
     rm(Dist) 
-    if (debug) print(paste("dim ",l))
+    print(paste("dim ",l))
     ks<-which.min(val)
     sigma<-sigmas[ks]
-    psigma<-psigmas[ks]
-   if (debug) print(paste("validity:", val))   
+    psigma<-psigmas[[ks]]
+    print(paste("validity:", val))   
     err<-error[ks]
     ks<-ks+1
   }
@@ -398,13 +428,14 @@ select_k<-function(data, diss=FALSE,kmax=15,Ca,centers,debug)
     Dist<-as.matrix(pknng(data,k=3,diss=diss,fixed.k=1, silent=T, MinGroup=0))
     s<-select.sigma(Dist,method=1,centers=centers,Ca=Ca,debug=debug)
     sigma<-s$mu
-    psigma<-s$pms
+    psigma<-s$ms
     err<-s$error
   }
   
   if(debug){
     print(paste("ks:", ks))
     print(sigma)
+    
   }
   out<-list(ks, sigma,err,psigma)
   names(out)<-list("k","sigma","error","psigma")
@@ -415,76 +446,12 @@ select_k<-function(data, diss=FALSE,kmax=15,Ca,centers,debug)
 ##Spectral clustering with Lrw Laplacian
 ## W is a similarity matrix
 
-spectral.clust2<-function(W, centers){
-  if (length(centers)==1) nc<-centers
-  else nc<-dim(centers)[1]
-  BIG.NUM<-10e100
-  N<-dim(W)[1]
-  ERROR.SPECC<-FALSE 
-  diag(W)<-0
-  d<-1/sqrt(rowSums(W))
-  
-  bool.inf<-rep(FALSE,N)
-  if(any(d==Inf)  ){
-    bool.inf<-is.infinite(d)
-    
-    if(any(bool.inf)){
-      inf.clusters<-rep(0,N)
-      inf.clusters[bool.inf]<-1:sum(bool.inf)
-      W<-W[!bool.inf,!bool.inf]
-      d<-d[!bool.inf]
-    }   
-  }
-  
-  
-  if(!any(d==Inf) && !any(is.na(d)) && length(d)>0)
-  {   
-    #L.rw<- diag(d)%*%W 
-    L.sym <- diag(d)%*%W#  d * W %*% diag(d)
-    #ss<-eigen(L.rw,symmetric=F)$vectors[,1:nc]  
-    ss<-irlba(L.sym,nu=nc,nv=nc)$u
-    xi <- Re(ss)
-    yi<-xi  /sqrt(rowSums(xi^2))
-    
-    rm(W,ss)
-  }
-  else{ERROR.SPECC<-TRUE;yi<-0}
-  
-  if (any(is.na(yi)) || any(is.infinite(yi)) || ERROR.SPECC){
-    res<-list()
-    print("Spectral Error")
-    res$specc.error<-TRUE
-    res$singletons<-FALSE
-    #    res$sum.specc.withinss<- Inf
-    res$cluster<-rep(1,N)
-    res$clusters<-res$cluster
-    res$yi<-yi
-    res$is.outlier<-bool.inf
-    res$affinity.matrix<-NULL
-  }
-  else{
-    res<- pam(dist(yi[,2]),nc)
-    #    res$sum.specc.withinss<- sum(res$clusinfo[,3])
-    clusters<-res$clustering    
-    res$singletons<-FALSE
-    
-    if(any(bool.inf)){
-      inf.clusters[!bool.inf]<-res$clustering+sum(bool.inf)
-      clusters<-inf.clusters
-      res$singletons<-TRUE
-    }    
-    res$is.outlier<-bool.inf
-    res$clusters<-clusters
-    res$specc.error<-FALSE
-    res$yi<-yi
-    res$affinity.matrix<-L.sym
-  }
-  return(res)
-}
+
 
 spectral.clust<-function(W, centers){
   if (length(centers)==1) nc<-centers
   else nc<-dim(centers)[1]
+
   BIG.NUM<-10e100
   N<-dim(W)[1]
   ERROR.SPECC<-FALSE 
@@ -504,10 +471,12 @@ spectral.clust<-function(W, centers){
   }
   
   
-  if(!any(d==Inf) && !any(is.na(d)) && length(d)>0)
+  if(length(d)>0&&!any(d==Inf) && !any(is.na(d)) )
   {   
     L.rw<- diag(d)%*%W 
     ss<-eigen(L.rw,symmetric=F)$vectors[,1:nc]   
+    #matmul<- function(x, extra=NULL) { cat("."); as.vector(L.rw %*% x) }
+    #ss<-arpack(matmul,sym=FALSE,options=list(which="LM",nev=2,n=N,ncv=N*0.1))$vectors
     yi <- Re(ss)
     rm(W,ss)
   }
@@ -523,12 +492,18 @@ spectral.clust<-function(W, centers){
     res$clusters<-res$cluster
     res$yi<-yi
     res$is.outlier<-bool.inf
-    res$affinity.matrix<-L.rw
+    res$affinity.matrix<-NULL
   }
   else{
     res<- pam(dist(yi[,1:nc]),nc)
+#     dat<-scale(yi[,nc], center = TRUE, scale = F)
+#     ind<-1:length(yi[,nc])
+#     res<-list()
+#     res$clustering<-rep(1,length(yi[,nc]))
+#     res$clustering[dat>0]<-2
     
-#    res$sum.specc.withinss<- sum(res$clusinfo[,3])
+    #res<-kmeans(yi[,1:nc],nc,iter.max=200)
+    #    res$sum.specc.withinss<- sum(res$clusinfo[,3])
     clusters<-res$clustering    
     res$singletons<-FALSE
     

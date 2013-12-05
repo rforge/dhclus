@@ -1,44 +1,20 @@
-poten<-function(A){
-  n<-dim(A)[1]
-z<-rep(1,n)
-w <-rep(0,n)
 
-i <- 0
-while (sqrt(t(z-w)%*%(z-w))  >  10^ (-14)){
-i <- i + 1
-w <- z
-z <- A%*%w
-l<-(t(z)%*%A%*%(z))/(t(z)%*%(z))
-  d<-rep(l,n)
-if (1/rcond(m<-(A- diag(d) )) >  10^ (-15))
- z <- m%*%(1/z) 
-j<-which.max(z)
-z<-z/z[j]
-}
-autovalor <-  (t(z)%*%A%*%(z)) %*% (t(z)%*%(z))
-Error <- sqrt((A%*%z-autovalor*z)^2)
-out<-c(autovalor,Error,z)
-  return(out)
-}
+
 #Distsum: Computes the sum of pairwise distances
 
 Distsum<-function(dist){
   d<-as.matrix(dist)
-  D<-sum(rowSums(d))
-  return(0.5*D)
+  D<-sum(rowSums(d^2))
+  return(D*0.5)
 }
 
 #Distsum: Computes the sum of squared pairwise distances
 Distsum2<-function(dist){
   d<-as.matrix(dist)
   D<-sum(rowSums(d^2))
-  return(0.5*D)
+  #elimine el factor 1/2 porque en la cantidad de puntos divido por n*n-1 en vez de (n*(n-1))/2
+  return(D)
 }
-
-
-
-# The pooled within-cluster sum of squares around the cluster means
-# If diss is TRUE data are treated as a distance matrix
 
 withinsum2<-function(data,labels, diss=FALSE){
   data<-as.matrix(data)
@@ -53,9 +29,36 @@ withinsum2<-function(data,labels, diss=FALSE){
       ind<-index[labels==i]
       n<-length(ind)
       if(diss==FALSE) 
-        D<-0.5*(sum(dist(data[ind,])^2))
+        D<-(sum(dist(data[ind,])^2))
       else  
         D <- Distsum2(data[ind,ind])
+      return(D/(n*(n-1)))
+      #return(D/n)
+    })
+  } else  stop("length Labels must be the same of data ")
+  return(w)
+}
+
+# The pooled within-cluster sum of squares around the cluster means
+# If diss is TRUE data are treated as a distance matrix
+
+withinsum<-function(data,labels, diss=FALSE){
+  data<-as.matrix(data)
+  
+  if(length(labels) == dim(data)[1])
+  {
+    index<-1: dim(data)[1]
+    labels<-relabel(labels) #in case labels not start with 1,2,etc
+    l<-length(unique(labels))
+    w<-vector(length=l)
+    w<-sapply(1:l, function(i) {
+      ind<-index[labels==i]
+      n<-length(ind)
+      if(diss==FALSE) 
+        D<-(sum(dist(data[ind,])^2))
+      else  
+        D <- Distsum(data[ind,ind])
+      #return(D/(n*(n-1)))
       return(D/n)
     })
   } else  stop("length Labels must be the same of data ")
@@ -100,7 +103,7 @@ labels_level<-function(class,i){
   c<-possibles(i) 
   
   ls<-((1:c)+2^i)-1
-
+  print(ls)
   m<-matrix(0,nrow=length(class),ncol=c/2)
   j<-1
   while(length(ls)>1){
@@ -108,7 +111,7 @@ labels_level<-function(class,i){
     lmax<-max(ls)
     cl<-c(lmax,lmax-1)
     ls<-ls[!is.element(ls,cl)]
-
+    print(ls)
     ind<-index[is.element(labs,cl)]    
     if(length(ind)>0){
       m[ind,j]<-floor((labs[ind])/2)
