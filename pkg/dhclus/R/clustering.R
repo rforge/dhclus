@@ -113,7 +113,7 @@ select.sigma<-function(Dist,method,kmax=10,centers,Ca,debug)
 {
   kmax=min(kmax,floor(dim(Dist)[1]/2)+1)
   print(c(kmax,dim(Dist)[1]))
-  Ca<-8
+  Ca<-6
   error<-0
   if(method!=3){
     pots<-1/c(sapply(1:Ca,function(x)(2^x)))  

@@ -72,7 +72,7 @@ test_gap<- function(data, labels, NumRef=150,sigmas,k=3,sigma=1,  method=2, debu
      
       if(method==1 ) dx1<-pknng(X1,k=k,diss=F,fixed.k=1, silent=T, MinGroup=0,penalize=1)
       
-      pots<-1/c(sapply(1:8,function(x)(2^x)))  
+      pots<-1/c(sapply(1:6,function(x)(2^x)))  
       pots<-(c(9:6/10,pots))#[1:8]
      # if (method==1) pots<-pots[1:7]
       
