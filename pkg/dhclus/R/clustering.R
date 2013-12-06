@@ -1,4 +1,4 @@
-Get.clusters<-function(data, index, diss=FALSE, debug=FALSE,method,metric ,NumRef)
+Get.clusters<-function(data, index, diss=FALSE, debug=FALSE,method=2,metric ,NumRef)
 {
   
   if(method==1) {

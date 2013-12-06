@@ -11,7 +11,7 @@ test<-function(data,result,...)
 #test gap statistics 
 # metric is used for compute the WSS : 1 pknng, 2 icav, 3 euclidean
 
-test_gap<- function(data, labels, NumRef=150,sigmas,k=3,sigma=1,  method=2, debug=T,metric=2)
+test_gap<- function(data, labels, NumRef=100,sigmas=c(1,3) ,k=3,sigma=1,  method=2, debug=FALSE,metric=2)
 { 
 
  debug=TRUE
@@ -36,9 +36,9 @@ test_gap<- function(data, labels, NumRef=150,sigmas,k=3,sigma=1,  method=2, debu
 ##dis<- as.matrix(dist(dat))  
   D<-dim(dis)[1]
 
-  WSS[1]<- (withinsum(dis, rep(1,D), diss=T))
+  WSS[1]<- (withinsum2(dis, rep(1,D), diss=T))
   W[1]<- log(WSS[1])  
-  WSS[2]<-sum(withinsum(dis, labels, diss=T))
+  WSS[2]<-sum(withinsum2(dis, labels, diss=T))
   W[2]<- log(WSS[2])
   
  
@@ -116,8 +116,8 @@ test_gap<- function(data, labels, NumRef=150,sigmas,k=3,sigma=1,  method=2, debu
     } 
     else 
     { 
-    Ws[1]<- log(withinsum(dx, rep(1,ncol(dx)), diss=T))
-    Ws[2]<- log(sum(withinsum(dx, labs$clusters,diss=T)))
+    Ws[1]<- log(withinsum2(dx, rep(1,ncol(dx)), diss=T))
+    Ws[2]<- log(sum(withinsum2(dx, labs$clusters,diss=T)))
    # print(sum(labs$clusters==1))
     }
     rm(X1,z11,dx)
