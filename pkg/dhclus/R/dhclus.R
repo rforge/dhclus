@@ -2,9 +2,7 @@
 
 dhclus<- function(data, diss=FALSE,debug=FALSE,FUNCluster=Get.clusters, FUNTest=test,...)
 {
-#  library(lattice)
- 
-#  trellis.device(dev=pdf, file=file) 
+
   n<-dim(data)[1]
   ind <- 1:n
   init_clusters <- ind
@@ -32,24 +30,12 @@ dhclus<- function(data, diss=FALSE,debug=FALSE,FUNCluster=Get.clusters, FUNTest=
 
     r<-dim(vec)[2]
     class$labelsTree<-vec
- #   class$as<-sapply(1:r, function(x) (mean(silhouette(class$labelsTree[,x],dmatrix=as.matrix(mst2Path.Diss(as.matrix(dist(data)))))[,3]) ))
-#    class$ssb<-sapply(1:r, function(x) (  bss(mst2Path.Diss(as.matrix(dist(data))),class$labelsTree[,x],diss=TRUE )))
- #   class$tags_sil<-relabel(class$labelsTree[,which.max(class$as)])
-#    class$tags_bss<-relabel(class$labelsTree[,which.min(class$ssb)])
-    #class$tags<-relabel(class$tags_bss)
+ 
   }
-    class$ltags<-class$tags
-    class$tags<-relabel(class$tags)
-  class$height<-max
- # pdf(file=file,paper="special",width=10,height=10)
-  #trellis.device(dev=pdf, file=file) 
- # colors <- colorRampPalette(c('green', 'red'))(256)
- # fig<-levelplot(class$Sx,col.regions=colors, cuts=100,scales=list(
- #   x=list(rot=90)
- # ))
- # print(fig)
- # graphics.off()
-  return(class)
+ class$ltags<-class$tags
+ class$tags<-relabel(class$tags)
+ class$height<-max
+ return(class)
 }
 
 calclus.spec <- function(data, index, kl , Sx,tags,   diss=FALSE, debug=FALSE, FUNCluster, FUNTest,...)
