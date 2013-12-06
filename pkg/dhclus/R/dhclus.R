@@ -17,7 +17,7 @@ dhclus<- function(data, diss=FALSE,debug=FALSE,FUNCluster=Get.clusters, FUNTest=
   vec<-as.matrix(class$tags)
   max<-(max_level(class$tags))
   if(max >0){
-    <-max
+    i<-max
     t<-class$tags
     while(i > 1) 
     { 
