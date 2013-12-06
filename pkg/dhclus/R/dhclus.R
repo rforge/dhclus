@@ -1,6 +1,6 @@
 
 
-dhclus<- function(data, diss=FALSE,debug=FALSE,file="Smatrix.pdf",FUNCluster=Get.clusters, FUNTest=test,...)
+dhclus<- function(data, diss=FALSE,debug=FALSE,FUNCluster=Get.clusters, FUNTest=test,...)
 {
 #  library(lattice)
  
@@ -17,7 +17,7 @@ dhclus<- function(data, diss=FALSE,debug=FALSE,file="Smatrix.pdf",FUNCluster=Get
   vec<-as.matrix(class$tags)
   max<-(max_level(class$tags))
   if(max >0){
-    i<-max
+    <-max
     t<-class$tags
     while(i > 1) 
     { 
