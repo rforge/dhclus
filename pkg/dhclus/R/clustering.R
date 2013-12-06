@@ -15,7 +15,7 @@ Get.clusters<-function(data, index, diss=FALSE, debug=FALSE,method,metric ,NumRe
     psigma<-s$psigma
     Sx1<-exp(-Dist^2/(2*sigma^2))
     if(!s$error){
-      sc<-spectral.clust(Sx1, 2) 
+      sc<-spectral.clust(Sx1, centers) 
       sc$error<-sc$specc.error
       sc$val<-val
       sc$sigma<-sigma
@@ -109,16 +109,16 @@ rbf.dot.multiscale<-function(data,scale.vector){
 }
 
 ##Select sigma for gaussian kernel
-select.sigma<-function(Dist,method,kmax=10,centers,Ca,debug)
+select.sigma<-function(Dist,method=2,kmax=10,centers,Ca,debug)
 {
   kmax=min(kmax,floor(dim(Dist)[1]/2)+1)
   print(c(kmax,dim(Dist)[1]))
-  Ca<-6
+  Ca<-8
   error<-0
   if(method!=3){
     pots<-1/c(sapply(1:Ca,function(x)(2^x)))  
     pots<-c(9:6/10,pots)#[1:8]
-    #if (method==1) pots<-pots[1:7]
+    if (method==1) pots<-pots[1:10]
     print(pots)  
     tmu<-quantile(Dist,probs=pots)
     C<-length(tmu)+1
