@@ -113,12 +113,12 @@ select.sigma<-function(Dist,method=2,kmax=10,centers,Ca,debug)
 {
   kmax=min(kmax,floor(dim(Dist)[1]/2)+1)
   print(c(kmax,dim(Dist)[1]))
-  Ca<-8
+   Ca<-floor(log2( (dim(Dist)[1])))-1
   error<-0
   if(method!=3){
     pots<-1/c(sapply(1:Ca,function(x)(2^x)))  
     pots<-c(9:6/10,pots)#[1:8]
-    if (method==1) pots<-pots[1:10]
+#    if (method==1) pots<-pots[1:10]
     print(pots)  
     tmu<-quantile(Dist,probs=pots)
     C<-length(tmu)+1

@@ -71,10 +71,10 @@ test_gap<- function(data, labels, NumRef=100,sigmas=c(1,3) ,k=3,sigma=1,  method
     if (method!=3){
      
       if(method==1 ) dx1<-pknng(X1,k=k,diss=F,fixed.k=1, silent=T, MinGroup=0,penalize=1)
-      
-      pots<-1/c(sapply(1:8,function(x)(2^x)))  
+      Ca<-floor(log2( (dim(dx)[1])))-1 
+      pots<-1/c(sapply(1:Ca,function(x)(2^x)))  
       pots<-(c(9:6/10,pots))#[1:8]
-      if (method==1) pots<-pots[1:10]
+    #  if (method==1) pots<-pots[1:10]
       
       ms<-sigmas[[1]]
       sel<-pots[ms]
