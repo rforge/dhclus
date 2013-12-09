@@ -1,8 +1,8 @@
-Get.clusters<-function(data, index, diss=FALSE, debug=FALSE,method=2,metric ,NumRef)
+Get.clusters<-function(data, index, diss=FALSE, debug=FALSE,centers=2,method=2,...)
 {
   
   if(method==1) {
-    s<-select_k(data[index,],kmax=9,Ca=7,centers=2,debug=TRUE)
+    s<-select_k(data[index,],kmax=9,centers=centers,debug=debug)
     val<- s$k #sel2_k(data[index,])
     
     if(debug)
@@ -35,7 +35,7 @@ Get.clusters<-function(data, index, diss=FALSE, debug=FALSE,method=2,metric ,Num
   { print(length(index))
     Dist<-as.matrix(dist(data[index,]))
     
-    re<-spectral.sep(Dist,method=method,centers=2,kmax=10,Ca=7,debug=TRUE)
+    re<-spectral.sep(Dist,method=method,centers=centers,kmax=10,debug=debug)
     sc<-re$sc
     sigma<-re$sigma
     psigma<-re$psigma
@@ -102,24 +102,24 @@ rbf.dot.multiscale2 <-function(Dist,sigma)
 }
 
 #### Make Local Scaling similarity matrix
-rbf.dot.multiscale<-function(data,scale.vector){
-  if(dim(data)[2]!=length(scale.vector)) stop("Length Missmatch")
-  euc<-.Call("rbf_dot_multiscaled",data, c(dim(data)[1],dim(data)[2]),as.double(scale.vector),DUP=F)
-  return(euc)
-}
+# rbf.dot.multiscale<-function(data,scale.vector){
+#   if(dim(data)[2]!=length(scale.vector)) stop("Length Missmatch")
+#   euc<-.Call("rbf_dot_multiscaled",data, c(dim(data)[1],dim(data)[2]),as.double(scale.vector),DUP=F)
+#   return(euc)
+# }
 
 ##Select sigma for gaussian kernel
-select.sigma<-function(Dist,method=2,kmax=10,centers,Ca,debug)
+select.sigma<-function(Dist,method=2,kmax=10,centers,debug)
 {
   kmax=min(kmax,floor(dim(Dist)[1]/2)+1)
   print(c(kmax,dim(Dist)[1]))
-   Ca<-floor(log2( (dim(Dist)[1])))-1
+  Ca<-floor(log2( (dim(Dist)[1])))-1
   error<-0
   if(method!=3){
     pots<-1/c(sapply(1:Ca,function(x)(2^x)))  
-    pots<-c(9:6/10,pots)#[1:8]
-#    if (method==1) pots<-pots[1:10]
-    print(pots)  
+    pots<-c(9:6/10,pots)
+  #  if (method==1) pots<-pots[1:10]
+    if(debug)print(pots)  
     tmu<-quantile(Dist,probs=pots)
     C<-length(tmu)+1
   }
@@ -177,8 +177,10 @@ select.sigma<-function(Dist,method=2,kmax=10,centers,Ca,debug)
             
             if(length(unique(res$clusters))==centers)
             { 
+    
               ws2<-sum(withinsum2(res$yi[,1:(centers)],res$clusters))
               ws1<-withinsum2(res$yi[,1:(centers)],rep(1,length(res$clusters)))
+
               w2[i]<-ws2
               w1[i]<-ws1
               diss[i] <-ws2# /abs(ws1-ws2)       
@@ -213,7 +215,6 @@ select.sigma<-function(Dist,method=2,kmax=10,centers,Ca,debug)
               i<-i+1}
         }
       
-      print(diss)
       ms <- which.min(diss )
       hb<-diss[ms]
  
@@ -235,8 +236,9 @@ select.sigma<-function(Dist,method=2,kmax=10,centers,Ca,debug)
         else b<-(sel - pots[(ms+1)])/(ms+2)
         
         pots2<-c(sel+2*a, sel+a,sel,sel-b,sel-2*b) 
-        print("segundo")
+       if(debug) {print("segundo")
         print(pots2)
+       }
         tmu<-c(quantile(Dist,probs=pots2))
         diss <-(rep(Inf,length(tmu)))
         w2 <-(rep(Inf,length(tmu)))
@@ -267,7 +269,7 @@ select.sigma<-function(Dist,method=2,kmax=10,centers,Ca,debug)
             }else  ind<- 1:dim(res$yi)[1]
             
             if(length(unique(res$clusters))==centers){
-              
+            
               ws2<-sum(withinsum2(res$yi[,1:centers],res$clusters))
               ws1<-withinsum2(res$yi[,1:centers],rep(1,length(res$clusters)))
               w2[i]<-ws2
@@ -296,10 +298,10 @@ select.sigma<-function(Dist,method=2,kmax=10,centers,Ca,debug)
         }
         
       }
-      if(method!=3){
-   
-      if(length(unique(bal))>1) print(":::Cambia") else print(":::NOcambia")
-      }
+#       if(method!=3){
+#    
+#       if(length(unique(bal))>1) print(":::Cambia") else print(":::NOcambia")
+#       }
       
       if (method==3) {
         if(dim(Dist)[1] > (kmax+2)) mu <-ttmu[(ms),]
@@ -335,9 +337,9 @@ select.sigma<-function(Dist,method=2,kmax=10,centers,Ca,debug)
   
 ##Spectral clustering for method 2 and 3
 ## Dist is a distance matrix
-spectral.sep<-function(Dist,method,centers,kmax,Ca,debug)
+spectral.sep<-function(Dist,method,centers,kmax=10,debug=F)
 {
-  s<-select.sigma(Dist, method=method,centers=centers,kmax=kmax,Ca=Ca,debug=debug)
+  s<-select.sigma(Dist, method=method,centers=centers,kmax=kmax,debug=debug)
   if(!is.null(s)){
 
   diss<-s$diss
@@ -353,7 +355,7 @@ spectral.sep<-function(Dist,method,centers,kmax,Ca,debug)
       Sx<-exp(-Dist^2/(2*mu^2))
       
     }
-    sc<-spectral.clust(Sx, 2)  
+    sc<-spectral.clust(Sx, centers)  
     
     psigma<-s$ms
   } 
@@ -388,7 +390,7 @@ spectral.sep<-function(Dist,method,centers,kmax,Ca,debug)
 
 
 ##Select k and sigma for method 1
-select_k<-function(data, diss=FALSE,kmax=15,Ca,centers,debug)
+select_k<-function(data, diss=FALSE,kmax=9,centers,debug=F)
 {
   kmin<-2
   l<-dim(data)[1]
@@ -405,7 +407,7 @@ select_k<-function(data, diss=FALSE,kmax=15,Ca,centers,debug)
     {
       Dist<-as.matrix(pknng(data,k=((kmin+i)-1),diss=diss,fixed.k=1, silent=T, MinGroup=0))
       print(kmin+i-1)
-      s<-select.sigma(Dist,method=1,centers=centers,Ca=Ca,debug=debug)
+      s<-select.sigma(Dist,method=1,centers=centers,debug=debug)
       sigmas[i]<-s$mu
       psigmas[[i]]<-s$ms
       val[i]<-s$min
@@ -415,18 +417,18 @@ select_k<-function(data, diss=FALSE,kmax=15,Ca,centers,debug)
     }
     
     rm(Dist) 
-    print(paste("dim ",l))
+    if(debug) print(paste("dim ",l))
     ks<-which.min(val)
     sigma<-sigmas[ks]
     psigma<-psigmas[[ks]]
-    print(paste("validity:", val))   
+    if(debug) print(paste("validity:", val))   
     err<-error[ks]
     ks<-ks+1
   }
   else {
     ks<-kmin
     Dist<-as.matrix(pknng(data,k=3,diss=diss,fixed.k=1, silent=T, MinGroup=0))
-    s<-select.sigma(Dist,method=1,centers=centers,Ca=Ca,debug=debug)
+    s<-select.sigma(Dist,method=1,centers=centers,debug=debug)
     sigma<-s$mu
     psigma<-s$ms
     err<-s$error
@@ -471,7 +473,7 @@ spectral.clust<-function(W, centers){
   }
   
   
-  if(length(d)>0&&!any(d==Inf) && !any(is.na(d)) )
+  if(length(d)>0 && !any(d==Inf) && !any(is.na(d)) )
   {   
     L.rw<- diag(d)%*%W 
     ss<-eigen(L.rw,symmetric=F)$vectors[,1:nc]   

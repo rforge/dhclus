@@ -12,8 +12,7 @@ simulating from a reference distribution.
 }
 
 \usage{
-test_gap(data, labels, NumRef=100, sigmas=c(1,3),
-k=3, sigma=1,  method=2, debug=FALSE, metric=2)
+test_gap(data, labels, sigmas=c(1,3),k=3,sigma=1,  method=2, debug=FALSE,metric=2,ws=2,NumRef=100)
 }
 
 \arguments{
@@ -28,6 +27,7 @@ for Local Scaling }
 \item{sigmas}{.}
 \item{k}{.}
 \item{metric}{.}
+\item{ws}{integer, indicating which gap will used, 1 means gap, 2 means weigthed gap}
 }
 \value{
 a list with the next components

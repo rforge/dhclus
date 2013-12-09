@@ -9,12 +9,13 @@ as partitional clustering strategy in each level.
 }
 
 \usage{
-dhclus(data, diss=FALSE,  FUNCluster=Get.clusters, FUNTest=test, ...)
+dhclus(data, diss=FALSE, debug = FALSE, FUNCluster=Get.clusters, FUNTest=test, ...)
 }
 
 \arguments{
 \item{data}{matrix of data}
 \item{diss}{Logical, indicates if the data matrix has data information or disimilarity information.}
+\item{debug}{Logical, determining if "progress" output should be printed. }
 \item{FUNCluster}{
 a function which accepts as first argument a (data) matrix, second argument an index vector
 indicating which element of data will be used, and returns a list with a component named   clusters which is a vector of length n = length(index) of integers in 1:2 determining the clustering or grouping of the n observations and a component named error which is a boolean
