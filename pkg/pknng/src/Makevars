@@ -1,0 +1,2 @@
+PKG_CFLAGS = -w -fopenmp -std=gnu99 -fgnu89-inline
+PKG_LIBS = -lgomp -lpthread
