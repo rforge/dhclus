@@ -46,7 +46,7 @@ using polynomic penalization.}
 library(pknng)
 data(Three.Rings.LowNoise)
 
-d.iso.a<-pknng(data[,-3],3,diss=F,mu="mean",method="euclidean",conn="one",penalize=1)
+d.iso.a<-pknng(data[,-3],3,diss=FALSE,mu="mean",method="euclidean",conn="one",penalize=1)
 HCmethod<-"average"
 
 a<-hclust(as.dist(d.iso.a),method = HCmethod)
