@@ -58,6 +58,6 @@ x11()
 plot(data[,1],data[,2],col=label.a,pch=16,cex=0.5)
 title("Clustering Result")
 
-see tests files in pknng/tests
+##see tests files in pknng/tests
 }
 \keyword{clustering}
