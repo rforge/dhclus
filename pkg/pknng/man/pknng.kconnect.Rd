@@ -25,7 +25,7 @@ pknng.kconnect (X,k,method="euclidean",conntype="minspan",union="near",penalize=
 \value{
   \code{pknng.kconnect} returns a list containing
   \item{i}{Integer vector. Source point which means that an edge goes from i to j.}
-  \item{k}Integer vector. Destination point which means that an edge goes from i to j.}
+  \item{k}{Integer vector. Destination point which means that an edge goes from i to j.}
   \item{s}{Real vector. Represents distance from point i to point j.}
 
 }

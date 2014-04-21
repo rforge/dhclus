@@ -13,7 +13,7 @@ pknng.mutualmetric (data,bins=0))
 }
 
 \arguments{
-  \item{data}{Matrix. Cols represents the number of points and rows the dimensions of the data.}}
+  \item{data}{Matrix. Cols represents the number of points and rows the dimensions of the data.}
   \item{bins}{Integer value. (bins*bins) is the number of bins used to construct the 2-d histogram. 
    If bins = 0, the number is calculated automatically.}}
 
