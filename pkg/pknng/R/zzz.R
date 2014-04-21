@@ -5,7 +5,7 @@
 #      Package: pknng
 #         File: zzz.R
 #
-# 
-# .First.lib <- function(lib, pkg) {
-#   library.dynam("pknng", pkg, lib)
-# }
+
+.First.lib <- function(lib, pkg) {
+  library.dynam("pknng", pkg, lib)
+}

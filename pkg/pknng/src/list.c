@@ -127,20 +127,47 @@ inline lnode * add_root_node(lnode *root, unsigned long int tag){
 	return(tmp);
 }
 
+// inline void merge(lnode *root,lnode *min_root){
+// 	
+// 	lnode *n;
+// 	
+// 	if (min_root->down != NULL) min_root->down->up = min_root->up;
+// 	min_root->up->down = min_root->down;
+// 	
+// 	min_root->down = NULL;
+// 	min_root->up = NULL;
+// 	n = min_root;
+// 	while(n->next != NULL) n = n->next;
+// 	n->next = root->next;
+// 	root->next = min_root;
+// 	root->cnt += min_root->cnt;
+// 	min_root->jtag = -1;
+// 	min_root->cnt = 0;
+// 	min_root->mark = 0;
+// 	min_root->cnt_root = 0;
+// 	
+// }
+
 inline void merge(lnode *root,lnode *min_root){
 	
 	lnode *n;
 	
-	if (min_root->down != NULL) min_root->down->up = min_root->up;
-	min_root->up->down = min_root->down;
+	if (min_root->up == NULL) {n = min_root;min_root = root;root = n;}
 	
+	if (min_root->down != NULL) min_root->down->up = min_root->up;
+	if (min_root->up != NULL) min_root->up->down = min_root->down;
+	
+
 	min_root->down = NULL;
 	min_root->up = NULL;
 	n = min_root;
+	
 	while(n->next != NULL) n = n->next;
+	
 	n->next = root->next;
 	root->next = min_root;
-	root->cnt += min_root->cnt;
+	root->cnt += (min_root->cnt) ? min_root->cnt:1;
+	
 	min_root->jtag = -1;
 	min_root->cnt = 0;
 	min_root->mark = 0;

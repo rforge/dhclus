@@ -1,8 +1,13 @@
-# Default NAMESPACE created by R
-# Remove the previous line if you edit this file
-
-# Export all names
-exportPattern("pknng")
-
-# Import all packages listed as Imports or Depends
+export("pknng.insider",
+  "pknng",
+	"NVI.list",
+	"cormetric",
+	"eucmetric",
+	"histfun",
+	"mi_metric",
+	"mutualInf",
+	"mi_estimator",
+	"rbf.dot.multiscale",
+	"multiscale.rbf"
+)
 useDynLib(pknng)

@@ -574,7 +574,7 @@ void matrix_div (SEXP DistMat, SEXP D_val, SEXP par){
 	d = REAL(D_val);
 	p = INTEGER(par);
 
-# pragma omp parallel private(Tnum,i,j,n,len)
+# pragma omp parallel private(i)
 {
 # pragma omp for schedule(dynamic,128)
 	for(i = 0; i < p[0]*p[0]; i++) data[i] /= d[0];
