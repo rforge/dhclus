@@ -6,7 +6,7 @@ Author: Ariel E. Baya <baya@cifasis-conicet.gov.ar>, Pablo Granitto <granitto@ci
 Maintainer: Ariel E. Baya <baya@cifasis-conicet.gov.ar>
 OS_type: unix
 SystemRequirements: POSIX-compliant OS
-Depends: 
+Depends: cluster
 Description: Clustering package for data analisys.
 License:  GPL (>= 2)
 BugReports:<baya@cifasis-conicet.gov.ar>
