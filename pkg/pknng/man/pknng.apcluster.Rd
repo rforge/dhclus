@@ -46,7 +46,7 @@ pknng.apclustert (data,i,j,datalen,n,preference,damp,maxiter,conviter=50,noise=0
   modified by Ariel E. Baya.
 }
 
-\references{ \item
+\references{ 
 Frey B.J.,Dueck D.\cr
 \emph{Clustering by passing messagesbetween data point.}\cr
 Science, vol. 315, pp. 972-976, Feb 16 2007\cr
